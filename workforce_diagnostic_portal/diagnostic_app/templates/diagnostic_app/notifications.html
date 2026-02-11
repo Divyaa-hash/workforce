@@ -1,0 +1,77 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Notifications</h1>
+            <p>Stay updated with system activities</p>
+        </div>
+        <div>
+            <form method="post" action="{% url 'mark_notifications_read' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">📭 Mark All as Read</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="margin-bottom: 20px;">
+        <h3>Recent Notifications</h3>
+    </div>
+    
+    <div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb; background: #eff6ff;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        👤
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">Welcome to Workforce Diagnostic</div>
+                        <div style="color: #6b7280; font-size: 14px;">System notification</div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: #6b7280; font-size: 14px;">Just now</div>
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="padding: 20px;">
+            <div style="text-align: center; padding: 40px 0; color: #6b7280;">
+                No more notifications at this time.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 30px; background: #f9fafb; padding: 20px; border-radius: 10px;">
+    <h3 style="margin-bottom: 15px;">Notification Types</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div style="padding: 15px; background: white; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">🔔 Job Role Created</div>
+            <div style="color: #6b7280; font-size: 14px;">When a new job role is created</div>
+        </div>
+        
+        <div style="padding: 15px; background: white; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">📝 Assessment Submitted</div>
+            <div style="color: #6b7280; font-size: 14px;">When someone submits assessment</div>
+        </div>
+        
+        <div style="padding: 15px; background: white; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">❌ Decline Alert</div>
+            <div style="color: #6b7280; font-size: 14px;">When a role declines a job</div>
+        </div>
+        
+        <div style="padding: 15px; background: white; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">✅ Final Decision</div>
+            <div style="color: #6b7280; font-size: 14px;">When all assessments are complete</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

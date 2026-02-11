@@ -1,0 +1,27 @@
+{% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {% if message.tags == 'success' %}
+        <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {% elif message.tags == 'error' %}
+        <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {% else %}
+        <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h1m0 0h-1m1 0v4m0 0v.01M12 8a1 1 0 100-2 1 1 0 000 2z" />
+        </svg>
+        {% endif %}
+        <div class="alert-content">
+            <div class="alert-title">
+                {% if message.tags == 'success' %}Success{% elif message.tags == 'error' %}Error{% else %}Info{% endif %}
+            </div>
+            <div class="alert-message">{{ message }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

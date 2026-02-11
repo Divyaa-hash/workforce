@@ -1,0 +1,24 @@
+<header class="header">
+    <div class="header-content">
+        <a href="{% url 'dashboard' %}" class="logo">
+            <div class="logo-icon">W</div>
+            <span>Workforce Diagnostic</span>
+        </a>
+        
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.username }}</div>
+                    <div class="user-role">{{ user.get_role_display }}</div>
+                </div>
+            </div>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>

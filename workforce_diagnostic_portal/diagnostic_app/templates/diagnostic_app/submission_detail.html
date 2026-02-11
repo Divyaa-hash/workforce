@@ -1,0 +1,188 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Submission Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Assessment Submission</h1>
+            <p>View your assessment details</p>
+        </div>
+        <div>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="margin-bottom: 10px;">Senior Full Stack Developer</h2>
+            <p style="color: #6b7280;">Submitted by: {{ user.get_role_display }} {{ user.username }}</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">
+                {% if submission.decision == 'approve' %}
+                <span style="color: #10b981;">✅ Approved</span>
+                {% else %}
+                <span style="color: #ef4444;">❌ Declined</span>
+                {% endif %}
+            </div>
+            <div style="color: #6b7280;">Submitted: Today</div>
+        </div>
+    </div>
+    
+    <!-- Risk Assessment -->
+    <div style="margin-bottom: 30px; padding: 20px; background: #f9fafb; border-radius: 10px;">
+        <h3 style="margin-bottom: 15px;">Risk Assessment</h3>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="font-size: 48px;">
+                {% if submission.risk_level == 'low' %}🟢
+                {% elif submission.risk_level == 'medium' %}🟡
+                {% else %}🔴
+                {% endif %}
+            </div>
+            <div>
+                <div style="font-size: 20px; font-weight: 600; margin-bottom: 5px;">
+                    {% if submission.risk_level == 'low' %}Low Risk
+                    {% elif submission.risk_level == 'medium' %}Medium Risk
+                    {% else %}High Risk
+                    {% endif %}
+                </div>
+                <div style="color: #6b7280;">
+                    {% if submission.risk_level == 'low' %}Proceed with confidence
+                    {% elif submission.risk_level == 'medium' %}Proceed with caution
+                    {% else %}Address issues before proceeding
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Questions and Answers -->
+    <div style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">Your Responses</h3>
+        
+        {% if user.get_level == 1 %}
+        <!-- Level 1 Responses -->
+        <div style="display: grid; gap: 15px;">
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Business Alignment</div>
+                <div>Rating: 4/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Financial Risk Assessment</div>
+                <div>Rating: 2/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Long-term Impact</div>
+                <div>Rating: 5/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Budget Approved</div>
+                <div>Yes</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Strategic Priority</div>
+                <div>High</div>
+            </div>
+        </div>
+        
+        {% elif user.get_level == 2 %}
+        <!-- Level 2 Responses -->
+        <div style="display: grid; gap: 15px;">
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Skill Availability</div>
+                <div>Medium</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Execution Feasibility</div>
+                <div>Rating: 4/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Team Dependency</div>
+                <div>Rating: 3/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Timeline Risk</div>
+                <div>Low</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Mentor Available</div>
+                <div>Yes</div>
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Level 3 Responses -->
+        <div style="display: grid; gap: 15px;">
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Talent Availability</div>
+                <div>Low</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Cost Validation</div>
+                <div>Yes</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Process Readiness</div>
+                <div>Rating: 3/5</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Onboarding Capacity</div>
+                <div>Yes</div>
+            </div>
+            
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Market Competition</div>
+                <div>High</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- If Declined, Show Reason -->
+    {% if submission.decision == 'decline' %}
+    <div style="margin-bottom: 30px; padding: 20px; background: #fef2f2; border-radius: 10px;">
+        <h3 style="margin-bottom: 15px; color: #991b1b;">Decline Details</h3>
+        <div style="margin-bottom: 10px;">
+            <strong>Category:</strong> {{ submission.decline_category|title }}
+        </div>
+        <div style="margin-bottom: 10px;">
+            <strong>Reason:</strong> {{ submission.decline_reason }}
+        </div>
+        <div>
+            <strong>Corrective Guidance:</strong> {{ submission.corrective_guidance }}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Rule-Based Analysis -->
+    <div style="background: #eff6ff; padding: 20px; border-radius: 10px;">
+        <h3 style="margin-bottom: 15px;">Rule-Based Analysis</h3>
+        <p style="color: #1e40af; line-height: 1.6;">
+            This decision was made using explicit if-else rules without any machine learning or AI.
+            The system evaluated your responses against predefined business rules to determine the risk level.
+        </p>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div style="display: flex; gap: 15px; margin-top: 30px;">
+    <a href="#" class="btn btn-primary">📋 View Full Results</a>
+    <a href="#" class="btn btn-secondary">✏️ Edit Submission</a>
+    <a href="#" class="btn btn-danger">🗑️ Delete Submission</a>
+</div>
+{% endblock %}

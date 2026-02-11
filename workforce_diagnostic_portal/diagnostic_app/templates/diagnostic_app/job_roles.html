@@ -1,0 +1,99 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Job Roles{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Job Roles</h1>
+    <p>View all job roles assigned to you</p>
+</div>
+
+{% if user.can_create_job_roles %}
+<div style="margin-bottom: 30px;">
+    <a href="{% url 'create_job_role' %}" class="btn btn-primary">
+        ➕ Create New Job Role
+    </a>
+</div>
+{% endif %}
+
+<div class="card">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 12px; text-align: left;">Job Title</th>
+                    <th style="padding: 12px; text-align: left;">Department</th>
+                    <th style="padding: 12px; text-align: left;">Urgency</th>
+                    <th style="padding: 12px; text-align: left;">Created</th>
+                    <th style="padding: 12px; text-align: left;">Your Status</th>
+                    <th style="padding: 12px; text-align: left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                {% for job in jobs %}
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 12px;">
+                        <div style="font-weight: 600;">{{ job.title }}</div>
+                    </td>
+                    <td style="padding: 12px;">{{ job.department }}</td>
+                    <td style="padding: 12px;">
+                        <span style="padding: 4px 10px; background: 
+                            {% if job.urgency == 'high' %}#fee2e2; color: #991b1b;
+                            {% elif job.urgency == 'medium' %}#fef3c7; color: #92400e;
+                            {% else %}#d1fae5; color: #065f46;
+                            {% endif %}; border-radius: 20px; font-size: 12px;">
+                            {{ job.urgency|upper }}
+                        </span>
+                    </td>
+                    <td style="padding: 12px;">{{ job.created_at|date:"M d, Y" }}</td>
+                    <td style="padding: 12px;">
+                        {% if job.user_status == 'completed' %}
+                        <span style="color: #10b981;">✅ Completed</span>
+                        {% elif job.user_status == 'in_progress' %}
+                        <span style="color: #f59e0b;">⏳ In Progress</span>
+                        {% else %}
+                        <span style="color: #6b7280;">⏱️ Not Started</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        <a href="{% url 'job_role_detail' job.id %}" class="btn btn-sm btn-primary">View</a>
+                        {% if job.user_status != 'completed' %}
+                        <a href="{% url 'diagnostic' job.id %}" class="btn btn-sm btn-success">Assess</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 40px; text-align: center; color: #6b7280;">
+                        No job roles available yet.
+                        {% if user.can_create_job_roles %}
+                        <br><a href="{% url 'create_job_role' %}" style="color: #3b82f6;">Create your first job role</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top: 30px; background: #f9fafb; padding: 20px; border-radius: 10px;">
+    <h3 style="margin-bottom: 15px;">Status Legend</h3>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%;"></div>
+            <span>Completed</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 50%;"></div>
+            <span>In Progress</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 12px; height: 12px; background: #6b7280; border-radius: 50%;"></div>
+            <span>Not Started</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

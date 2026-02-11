@@ -1,0 +1,24 @@
+<div class="job-card">
+    <div class="job-header">
+        <div>
+            <h3 class="job-title">{{ job.title }}</h3>
+            <p class="job-department">{{ job.department }}</p>
+        </div>
+        <span class="urgency-badge urgency-{{ job.urgency }}">
+            {{ job.urgency|upper }}
+        </span>
+    </div>
+    
+    <p class="job-description">{{ job.description|truncatewords:20 }}</p>
+    
+    <div class="job-footer">
+        <div class="job-stats">
+            <span class="stat-item">💰 {{ job.budget_range }}</span>
+            <span class="stat-item">👥 {{ job.experience_level }}</span>
+        </div>
+        
+        <div class="job-actions">
+            <a href="#" class="btn btn-sm btn-primary">View Details</a>
+        </div>
+    </div>
+</div>

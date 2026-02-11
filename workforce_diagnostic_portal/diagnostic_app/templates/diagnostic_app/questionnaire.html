@@ -1,0 +1,336 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Diagnostic Assessment{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Diagnostic Assessment</h1>
+            <p>Job Role: <strong>{{ job.title }}</strong></p>
+            <p>Your Role: <strong>{{ user.get_role_display }}</strong></p>
+        </div>
+        <div>
+            <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to Job Roles</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <form method="post" class="diagnostic-form" id="diagnostic-assessment-form">
+        {% csrf_token %}
+        
+        <!-- Role-specific questions based on user level -->
+        {% if user.get_level == 1 %}
+        <!-- Level 1 Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #065f46;">Level 1 - Strategic Questions</h3>
+            
+            <!-- Common Level 1 Questions -->
+            <div class="form-group">
+                <label>1. Business Alignment (1-5, where 5 is excellent)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q1_business_alignment" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Financial Risk Assessment (1-5, where 1 is low risk)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q2_financial_risk" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Long-term Impact (1-5, where 5 is high impact)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q3_long_term_impact" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Budget Approved?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q4_budget_approval" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q4_budget_approval" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Strategic Priority</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q5_strategic_priority" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q5_strategic_priority" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q5_strategic_priority" value="high" required> High
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        {% elif user.get_level == 2 %}
+        <!-- Level 2 Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #92400e;">Level 2 - Execution Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Skill Availability in Market</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q6_skill_availability" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q6_skill_availability" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q6_skill_availability" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Execution Feasibility (1-5, where 5 is highly feasible)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q7_execution_feasibility" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Team Dependency Level (1-5, where 5 is high dependency)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q8_team_dependency" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Timeline Risk</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q9_timeline_risk" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q9_timeline_risk" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q9_timeline_risk" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Mentor/Trainer Available?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q10_mentor_available" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q10_mentor_available" value="false" required> No
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Level 3 Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #1e40af;">Level 3 - HR Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Talent Availability</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q11_talent_availability" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q11_talent_availability" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q11_talent_availability" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Cost Validated with Market?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q12_cost_validation" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q12_cost_validation" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Process Readiness (1-5, where 5 is fully ready)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q13_process_readiness" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Onboarding Capacity Available?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q14_onboarding_capacity" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q14_onboarding_capacity" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Market Competition Level</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q15_market_competition" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q15_market_competition" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q15_market_competition" value="high" required> High
+                    </label>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Decision Section -->
+        <div style="margin: 40px 0; padding: 30px; background: #f9fafb; border-radius: 10px;">
+            <h3 style="margin-bottom: 20px;">Final Decision</h3>
+            
+            <div class="form-group">
+                <label>Your Decision</label>
+                <div style="display: flex; gap: 30px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: #d1fae5; border-radius: 8px; cursor: pointer;">
+                        <input type="radio" name="decision" value="approve" required style="transform: scale(1.2);">
+                        <span style="font-weight: 600; color: #065f46;">✅ Approve</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: #fee2e2; border-radius: 8px; cursor: pointer;">
+                        <input type="radio" name="decision" value="decline" required style="transform: scale(1.2);">
+                        <span style="font-weight: 600; color: #991b1b;">❌ Decline</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div id="decline-reason" style="display: none; margin-top: 20px;">
+                <div class="form-group">
+                    <label>Decline Category</label>
+                    <select name="decline_category" style="margin-top: 10px;">
+                        <option value="">Select reason category</option>
+                        <option value="budget_constraint">Budget constraint</option>
+                        <option value="skill_unavailability">Skill unavailability</option>
+                        <option value="timeline_risk">Timeline risk</option>
+                        <option value="team_dependency">Team dependency</option>
+                        <option value="business_misalignment">Business misalignment</option>
+                        <option value="operational_gap">Operational readiness gap</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Detailed Reason</label>
+                    <textarea name="decline_reason" rows="3" placeholder="Please provide detailed reason for declining..." style="margin-top: 10px;"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #eff6ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <p><strong>Note:</strong> All decisions are made using explicit rule-based logic. Your responses will be evaluated against predefined business rules.</p>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Submit Assessment</button>
+            <a href="{% url 'job_roles' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const decisionRadios = document.querySelectorAll('input[name="decision"]');
+    const declineReasonDiv = document.getElementById('decline-reason');
+    
+    decisionRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'decline') {
+                declineReasonDiv.style.display = 'block';
+                // Make decline fields required
+                document.querySelector('select[name="decline_category"]').required = true;
+                document.querySelector('textarea[name="decline_reason"]').required = true;
+            } else {
+                declineReasonDiv.style.display = 'none';
+                // Remove required attribute
+                document.querySelector('select[name="decline_category"]').required = false;
+                document.querySelector('textarea[name="decline_reason"]').required = false;
+            }
+        });
+    });
+    
+    // Form validation
+    const form = document.querySelector('.diagnostic-form');
+    form.addEventListener('submit', function(e) {
+        const selectedDecision = document.querySelector('input[name="decision"]:checked');
+        if (!selectedDecision) {
+            e.preventDefault();
+            alert('Please select a decision (Approve or Decline).');
+            return false;
+        }
+        
+        if (selectedDecision.value === 'decline') {
+            const category = document.querySelector('select[name="decline_category"]').value;
+            const reason = document.querySelector('textarea[name="decline_reason"]').value;
+            
+            if (!category || !reason.trim()) {
+                e.preventDefault();
+                alert('Please provide both decline category and detailed reason.');
+                return false;
+            }
+        }
+        
+        return true;
+    });
+});
+</script>
+{% endblock %}

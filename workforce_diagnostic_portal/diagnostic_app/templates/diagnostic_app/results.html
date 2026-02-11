@@ -1,0 +1,152 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Results - Senior Full Stack Developer{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Diagnostic Results</h1>
+            <p>Job Role: <strong>Senior Full Stack Developer</strong></p>
+        </div>
+        <div>
+            <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to Job Roles</a>
+        </div>
+    </div>
+</div>
+
+<!-- Final Recommendation -->
+<div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
+    <h2 style="margin-bottom: 15px; color: #065f46;">✅ Final Recommendation</h2>
+    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+        <div style="font-size: 48px;">🟢</div>
+        <div>
+            <h3 style="font-size: 24px; margin-bottom: 5px;">Proceed with hiring</h3>
+            <p style="color: #166534;"><strong>Risk Level:</strong> Low Risk</p>
+            <p style="color: #166534;"><strong>Conditions:</strong> No special conditions required</p>
+        </div>
+    </div>
+</div>
+
+<!-- Results by Level -->
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px 0;">
+    <!-- Level 1 Results -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            🟢 Level 1 - Strategic
+        </h3>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">Founder</div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Decision: <strong style="color: #10b981;">✅ Approve</strong></span>
+                <span>Risk: <strong style="color: #10b981;">Low</strong></span>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">Co-Founder</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+        
+        <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">CEO</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+    </div>
+    
+    <!-- Level 2 Results -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #92400e; display: flex; align-items: center; gap: 8px;">
+            🟠 Level 2 - Execution
+        </h3>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">CTO</div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Decision: <strong style="color: #10b981;">✅ Approve</strong></span>
+                <span>Risk: <strong style="color: #f59e0b;">Medium</strong></span>
+            </div>
+            <div style="font-size: 14px; color: #92400e;">Note: Skill availability is medium</div>
+        </div>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">COO</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+        
+        <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">Project Head</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+    </div>
+    
+    <!-- Level 3 Results -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #1e40af; display: flex; align-items: center; gap: 8px;">
+            🔵 Level 3 - HR
+        </h3>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">HR Manager</div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Decision: <strong style="color: #ef4444;">❌ Decline</strong></span>
+                <span>Risk: <strong style="color: #ef4444;">High</strong></span>
+            </div>
+            <div style="font-size: 14px; color: #991b1b;">
+                <strong>Reason:</strong> Talent availability low in market<br>
+                <strong>Guidance:</strong> Revise skill expectations or provide training
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">Recruiter</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+        
+        <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 5px;">HR Executive</div>
+            <div style="color: #6b7280; font-size: 14px;">Pending assessment</div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary -->
+<div class="card">
+    <h3 style="margin-bottom: 20px;">Summary</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+        <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">1/9</div>
+            <div style="color: #6b7280;">Completed Assessments</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">1</div>
+            <div style="color: #6b7280;">Decline Decisions</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 10px;">11%</div>
+            <div style="color: #6b7280;">Overall Progress</div>
+        </div>
+    </div>
+    
+    <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+        <h4 style="margin-bottom: 15px;">Key Findings</h4>
+        <ul style="color: #6b7280; line-height: 1.6;">
+            <li>Strategic level approves the role with low risk</li>
+            <li>Execution level shows medium risk due to skill availability</li>
+            <li>HR level identified talent availability as a concern</li>
+            <li>Overall recommendation: Proceed with conditions</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div style="display: flex; gap: 15px; margin-top: 30px;">
+    <button class="btn btn-primary">📥 Download Report</button>
+    <button class="btn btn-secondary">📧 Share Results</button>
+    <button class="btn btn-success">✅ Mark as Complete</button>
+</div>
+{% endblock %}

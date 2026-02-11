@@ -1,0 +1,182 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Job Role Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Job Role Details</h1>
+            <p>View complete details and assessment status</p>
+        </div>
+        <div>
+            <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to List</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div>
+            <h2 style="margin-bottom: 10px;">{{ job.title }}</h2>
+            <p style="color: #6b7280; margin-bottom: 5px;">{{ job.department }} Department</p>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <span style="padding: 6px 12px; background: 
+                    {% if job.urgency == 'high' %}#fee2e2; color: #991b1b;
+                    {% elif job.urgency == 'medium' %}#fef3c7; color: #92400e;
+                    {% else %}#d1fae5; color: #065f46;
+                    {% endif %}; border-radius: 20px; font-size: 14px;">
+                    {% if job.urgency == 'high' %}⚡ High Urgency
+                    {% elif job.urgency == 'medium' %}⚡ Medium Urgency
+                    {% else %}⚡ Low Urgency
+                    {% endif %}
+                </span>
+                <span style="padding: 6px 12px; background: #d1fae5; color: #065f46; border-radius: 20px; font-size: 14px;">
+                    ✅ {{ job.status|title }}
+                </span>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">{{ job.budget_range }}</div>
+            <div style="color: #6b7280;">Budget Range</div>
+        </div>
+    </div>
+    
+    <div style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Job Description</h3>
+        <p style="line-height: 1.6;">{{ job.description }}</p>
+    </div>
+    
+    <div style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Required Skills</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            {% for skill in job.required_skills.split %}
+                {% if skill.strip %}
+                <span style="padding: 8px 16px; background: #f3f4f6; border-radius: 20px;">{{ skill.strip }}</span>
+                {% endif %}
+            {% empty %}
+            <span style="padding: 8px 16px; background: #f3f4f6; border-radius: 20px;">No skills specified</span>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 15px;">Assessment Progress</h3>
+        <div style="background: #f3f4f6; height: 10px; border-radius: 5px; margin-bottom: 10px;">
+            <div style="width: {{ progress }}%; height: 100%; background: 
+                {% if progress == 100 %}#10b981;
+                {% elif progress >= 50 %}#f59e0b;
+                {% else %}#ef4444;
+                {% endif %}; border-radius: 5px;"></div>
+        </div>
+        <p style="color: #6b7280; text-align: center;">
+            {% if progress == 0 %}
+            No assessments submitted yet
+            {% else %}
+            {{ completed_assignments }} of {{ total_assignments }} assessments completed ({{ progress }}%)
+            {% endif %}
+        </p>
+    </div>
+    
+    <div style="display: flex; gap: 15px;">
+        {% if not user_submission %}
+            {% for assignment in assignments %}
+                {% if assignment.user == user and not assignment.is_completed %}
+                <a href="{% url 'diagnostic' job.id %}" class="btn btn-primary">
+                    📝 Start Assessment
+                </a>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <a href="{% url 'submission_detail' user_submission.id %}" class="btn btn-success">
+            ✅ View Your Assessment
+        </a>
+        {% endif %}
+        
+        {% if user.get_level == 1 %}
+        <a href="{% url 'results' job.id %}" class="btn btn-secondary">
+            📋 View All Assessments
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Simple Assessment Status -->
+<div class="card">
+    <h3 style="margin-bottom: 20px;">Assessment Status</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+        <!-- Level 1 -->
+        <div>
+            <h4 style="margin-bottom: 15px; color: #065f46;">Level 1 - Strategic</h4>
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+                {% for sub in level1_subs %}
+                <div style="margin-bottom: 10px;">
+                    <div style="font-weight: 500;">{{ sub.user.get_role_display }}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span style="color: {% if sub.decision == 'approve' %}#10b981{% else %}#ef4444{% endif %};">
+                            {{ sub.get_decision_display }}
+                        </span>
+                        <span style="color: {% if sub.risk_level == 'low' %}#10b981{% elif sub.risk_level == 'medium' %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ sub.get_risk_level_display }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color: #6b7280; font-size: 14px; text-align: center;">
+                    No assessments yet
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Level 2 -->
+        <div>
+            <h4 style="margin-bottom: 15px; color: #92400e;">Level 2 - Execution</h4>
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+                {% for sub in level2_subs %}
+                <div style="margin-bottom: 10px;">
+                    <div style="font-weight: 500;">{{ sub.user.get_role_display }}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span style="color: {% if sub.decision == 'approve' %}#10b981{% else %}#ef4444{% endif %};">
+                            {{ sub.get_decision_display }}
+                        </span>
+                        <span style="color: {% if sub.risk_level == 'low' %}#10b981{% elif sub.risk_level == 'medium' %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ sub.get_risk_level_display }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color: #6b7280; font-size: 14px; text-align: center;">
+                    No assessments yet
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Level 3 -->
+        <div>
+            <h4 style="margin-bottom: 15px; color: #1e40af;">Level 3 - HR</h4>
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
+                {% for sub in level3_subs %}
+                <div style="margin-bottom: 10px;">
+                    <div style="font-weight: 500;">{{ sub.user.get_role_display }}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span style="color: {% if sub.decision == 'approve' %}#10b981{% else %}#ef4444{% endif %};">
+                            {{ sub.get_decision_display }}
+                        </span>
+                        <span style="color: {% if sub.risk_level == 'low' %}#10b981{% elif sub.risk_level == 'medium' %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ sub.get_risk_level_display }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color: #6b7280; font-size: 14px; text-align: center;">
+                    No assessments yet
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

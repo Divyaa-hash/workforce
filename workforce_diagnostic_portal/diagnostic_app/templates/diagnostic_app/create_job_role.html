@@ -1,0 +1,119 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Create Job Role{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Create New Job Role</h1>
+    <p>Only Founders, Co-Founders, CEOs, and CFOs can create new job roles</p>
+</div>
+
+<div class="card">
+    <form method="post" class="job-role-form">
+        {% csrf_token %}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="title">Job Title *</label>
+                <input type="text" id="title" name="title" required placeholder="e.g., Senior Full Stack Developer">
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department *</label>
+                <select id="department" name="department" required>
+                    <option value="">Select department</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Product">Product</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Finance">Finance</option>
+                    <option value="HR">HR</option>
+                    <option value="Design">Design</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="experience_level">Experience Level *</label>
+                <select id="experience_level" name="experience_level" required>
+                    <option value="">Select level</option>
+                    <option value="Entry Level">Entry Level (0-2 years)</option>
+                    <option value="Mid Level">Mid Level (3-5 years)</option>
+                    <option value="Senior Level">Senior Level (5+ years)</option>
+                    <option value="Lead/Manager">Lead/Manager</option>
+                    <option value="Director/VP">Director/VP</option>
+                    <option value="C-Level">C-Level</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="budget_range">Budget Range *</label>
+                <select id="budget_range" name="budget_range" required>
+                    <option value="">Select budget range</option>
+                    <option value="$50k - $70k">$50k - $70k (Entry Level)</option>
+                    <option value="$70k - $90k">$70k - $90k (Mid Level)</option>
+                    <option value="$90k - $120k">$90k - $120k (Senior Level)</option>
+                    <option value="$120k - $150k">$120k - $150k (Lead/Manager)</option>
+                    <option value="$150k - $200k">$150k - $200k (Director)</option>
+                    <option value="$200k+">$200k+ (C-Level)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="urgency">Urgency *</label>
+            <select id="urgency" name="urgency" required>
+                <option value="">Select urgency</option>
+                <option value="low">Low (Can wait 2+ months)</option>
+                <option value="medium">Medium (Need in 1-2 months)</option>
+                <option value="high">High (Need immediately)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Job Description *</label>
+            <textarea id="description" name="description" rows="4" required placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="required_skills">Required Skills *</label>
+            <textarea id="required_skills" name="required_skills" rows="3" placeholder="List key skills separated by commas (e.g., React, Python, AWS)" required></textarea>
+        </div>
+        
+        <div style="background: #eff6ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <p><strong>Note:</strong> After creating this job role, relevant roles across all three levels will be automatically assigned and notified.</p>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Create Job Role</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-update budget based on experience level
+    const experienceSelect = document.getElementById('experience_level');
+    const budgetSelect = document.getElementById('budget_range');
+    
+    experienceSelect.addEventListener('change', function() {
+        const experience = this.value;
+        let budget = '';
+        
+        if (experience === 'Entry Level') budget = '$50k - $70k';
+        else if (experience === 'Mid Level') budget = '$70k - $90k';
+        else if (experience === 'Senior Level') budget = '$90k - $120k';
+        else if (experience === 'Lead/Manager') budget = '$120k - $150k';
+        else if (experience === 'Director/VP') budget = '$150k - $200k';
+        else if (experience === 'C-Level') budget = '$200k+';
+        
+        if (budget) {
+            budgetSelect.value = budget;
+        }
+    });
+});
+</script>
+{% endblock %}

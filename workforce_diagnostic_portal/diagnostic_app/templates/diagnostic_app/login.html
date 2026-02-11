@@ -1,0 +1,320 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block login_content %}
+<style>
+    .login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #ffffff;
+        padding: 24px;
+    }
+    
+    .login-container {
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    
+    .login-header {
+        background: #ffffff;
+        padding: 40px 40px 30px;
+        text-align: center;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .logo-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border-radius: 50%;
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        font-size: 32px;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .login-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+    
+    .login-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    .login-card {
+        padding: 40px;
+    }
+    
+    .login-form {
+        margin-bottom: 32px;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 14px 16px;
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #111827;
+        transition: all 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 8px;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    .demo-section {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 24px;
+        margin-top: 32px;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .demo-section h3 {
+        color: #374151;
+        font-size: 16px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+    
+    .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    
+    .demo-user {
+        background: #ffffff;
+        padding: 16px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    
+    .demo-user:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border-color: #3b82f6;
+    }
+    
+    .role-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .level-1 { background: #d1fae5; color: #065f46; }
+    .level-2 { background: #fef3c7; color: #92400e; }
+    .level-3 { background: #dbeafe; color: #1e40af; }
+    
+    .demo-user strong {
+        display: block;
+        color: #111827;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+    
+    .demo-user .credentials {
+        font-size: 12px;
+        color: #6b7280;
+    }
+    
+    .demo-user .role-hint {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 4px;
+        font-style: italic;
+    }
+    
+    .login-footer {
+        text-align: center;
+        padding: 24px 40px;
+        background: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 13px;
+    }
+    
+    .system-tag {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #f3f4f6;
+        color: #6b7280;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 8px;
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-circle">W</div>
+            <h1>Workforce Diagnostic</h1>
+            <p class="login-subtitle">Rule-based hiring readiness assessment</p>
+        </div>
+        
+        <div class="login-card">
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Select Your Role</label>
+                    <select id="role" name="role" required>
+                        <option value="">Choose your role...</option>
+                        <optgroup label="Level 1 - Strategic / Ownership">
+                            <option value="founder">👑 Founder</option>
+                            <option value="co_founder">👑 Co-Founder</option>
+                            <option value="ceo">👑 CEO</option>
+                            <option value="cfo">👑 CFO</option>
+                        </optgroup>
+                        <optgroup label="Level 2 - Execution / Delivery">
+                            <option value="cto">⚙️ CTO / Tech Lead</option>
+                            <option value="coo">⚙️ COO</option>
+                            <option value="project_head">⚙️ Project Head / Team Lead</option>
+                        </optgroup>
+                        <optgroup label="Level 3 - HR / Operations Support">
+                            <option value="hr_manager">📋 HR Manager</option>
+                            <option value="recruiter">📋 Recruiter</option>
+                            <option value="hr_executive">📋 HR Executive</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+            
+            <div class="demo-section">
+                <h3>Demo Credentials</h3>
+                <div class="demo-grid">
+                    <div class="demo-user" data-username="founder" data-password="founder123" data-role="founder">
+                        <div class="role-badge level-1">Level 1</div>
+                        <strong>Founder</strong>
+                        <div class="credentials">User: founder</div>
+                        <div class="credentials">Pass: founder123</div>
+                        <div class="role-hint">Select: 👑 Founder</div>
+                    </div>
+                    
+                    <div class="demo-user" data-username="cto" data-password="cto123" data-role="cto">
+                        <div class="role-badge level-2">Level 2</div>
+                        <strong>CTO</strong>
+                        <div class="credentials">User: cto</div>
+                        <div class="credentials">Pass: cto123</div>
+                        <div class="role-hint">Select: ⚙️ CTO</div>
+                    </div>
+                    
+                    <div class="demo-user" data-username="hr" data-password="hr123" data-role="hr_manager">
+                        <div class="role-badge level-3">Level 3</div>
+                        <strong>HR Manager</strong>
+                        <div class="credentials">User: hr</div>
+                        <div class="credentials">Pass: hr123</div>
+                        <div class="role-hint">Select: 📋 HR Manager</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="login-footer">
+            <p>Workforce Readiness Diagnostic System v1.0</p>
+            <div class="system-tag">No AI • Rule-Based • Fully Explainable</div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const demoUsers = document.querySelectorAll('.demo-user');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const roleSelect = document.getElementById('role');
+    
+    demoUsers.forEach(user => {
+        user.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            const password = this.getAttribute('data-password');
+            const role = this.getAttribute('data-role');
+            
+            usernameInput.value = username;
+            passwordInput.value = password;
+            roleSelect.value = role;
+            
+            this.style.borderColor = '#3b82f6';
+            this.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2)';
+            
+            setTimeout(() => {
+                this.style.borderColor = '#e5e7eb';
+                this.style.boxShadow = 'none';
+            }, 1000);
+        });
+    });
+});
+</script>
+{% endblock %}

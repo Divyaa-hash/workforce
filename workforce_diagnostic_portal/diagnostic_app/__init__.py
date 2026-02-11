@@ -1,0 +1,1 @@
+default_app_config = 'diagnostic_app.apps.DiagnosticAppConfig'
