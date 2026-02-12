@@ -8,11 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-12345')
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = False
+
 ALLOWED_HOSTS = [
+    'workforce-1-i2gm.onrender.com',
     'localhost',
-    '127.0.0.1',
-    'workforce-1-i2gm.onrender.com'
+    '127.0.0.1'
 ]
 
 
