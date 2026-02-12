@@ -3,13 +3,16 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Count
+from django.urls import reverse
 from .forms import CustomUserCreationForm, LoginForm, JobRoleForm, DiagnosticForm
 from .models import User, JobRole, DiagnosticSubmission, RoleAssignment, Notification
 
 # Authentication Views
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        level = request.user.get_level()
+        dashboard_url = reverse('dashboard')
+        return redirect(f'{dashboard_url}?level={level}')
     
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -28,7 +31,9 @@ def login_view(request):
             if user.role == role:
                 login(request, user)
                 messages.success(request, f'Welcome, {user.get_role_display()}!')
-                return redirect('dashboard')
+                level = user.get_level()
+                dashboard_url = reverse('dashboard')
+                return redirect(f'{dashboard_url}?level={level}')
             else:
                 messages.error(request, f'Please select correct role: {user.get_role_display()}')
         else:
@@ -168,14 +173,18 @@ def job_roles_view(request):
         assigned_job_ids = RoleAssignment.objects.filter(user=request.user).values_list('job_role_id', flat=True)
         jobs = JobRole.objects.filter(id__in=assigned_job_ids).order_by('-created_at')
     
-    # Get submission status for each job
+    # Get submission status for each job for the current user only
     for job in jobs:
         try:
             assignment = RoleAssignment.objects.get(job_role=job, user=request.user)
-            job.user_status = 'completed' if assignment.is_completed else 'assigned'
+            if assignment.is_completed:
+                job.user_status = 'completed'
+            else:
+                job.user_status = 'in_progress'
             job.can_assess = not assignment.is_completed
         except RoleAssignment.DoesNotExist:
-            job.user_status = 'not_assigned'
+            # User has not started / is not assigned to this job
+            job.user_status = 'not_started'
             job.can_assess = False
     
     context = {'jobs': jobs}
@@ -206,8 +215,8 @@ def job_role_detail_view(request, job_id):
     submissions = DiagnosticSubmission.objects.filter(job_role=job)
     
     # Group by level for display
-    level1_subs = submissions.filter(user__role__in=['founder', 'co_founder', 'ceo', 'cfo'])
-    level2_subs = submissions.filter(user__role__in=['cto', 'coo', 'project_head'])
+    level1_subs = submissions.filter(user__role__in=['founder', 'co_founder'])
+    level2_subs = submissions.filter(user__role__in=['ceo', 'cfo', 'cto', 'coo', 'project_head'])
     level3_subs = submissions.filter(user__role__in=['hr_manager', 'recruiter', 'hr_executive'])
     
     # Get all users for display
@@ -329,7 +338,13 @@ def submission_detail_view(request, submission_id):
 # Notification Views
 @login_required
 def notifications_view(request):
-    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    # Show only unread notifications for the current user.
+    # The dashboard already shows up to 5 unread items; this page
+    # is the full unread inbox so that "Mark All as Read" visibly clears it.
+    notifications = Notification.objects.filter(
+        user=request.user,
+        is_read=False
+    ).order_by('-created_at')
     context = {'notifications': notifications}
     return render(request, 'diagnostic_app/notifications.html', context)
 
@@ -356,8 +371,8 @@ def results_view(request, job_id):
     submissions = DiagnosticSubmission.objects.filter(job_role=job)
     
     # Group submissions by level
-    level1_subs = submissions.filter(user__role__in=['founder', 'co_founder', 'ceo', 'cfo'])
-    level2_subs = submissions.filter(user__role__in=['cto', 'coo', 'project_head'])
+    level1_subs = submissions.filter(user__role__in=['founder', 'co_founder'])
+    level2_subs = submissions.filter(user__role__in=['ceo', 'cfo', 'cto', 'coo', 'project_head'])
     level3_subs = submissions.filter(user__role__in=['hr_manager', 'recruiter', 'hr_executive'])
     
     # Calculate overall progress

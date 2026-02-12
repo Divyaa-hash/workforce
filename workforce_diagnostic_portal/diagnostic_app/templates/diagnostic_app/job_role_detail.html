@@ -102,8 +102,9 @@
 </div>
 
 <!-- Simple Assessment Status -->
+{% if user.get_level == 1 %}
 <div class="card">
-    <h3 style="margin-bottom: 20px;">Assessment Status</h3>
+    <h3 style="margin-bottom: 20px;">Assessment Status (All Levels)</h3>
     
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
         <!-- Level 1 -->
@@ -179,4 +180,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

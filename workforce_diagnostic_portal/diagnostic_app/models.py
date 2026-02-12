@@ -22,7 +22,8 @@ class User(AbstractUser):
     def get_level(self):
         """Get the decision level based on role"""
         level_map = {
-            'founder': 1, 'co_founder': 1, 'ceo': 1, 'cfo': 1,
+            'founder': 1, 'co_founder': 1,
+            'ceo': 2, 'cfo': 2,
             'cto': 2, 'coo': 2, 'project_head': 2,
             'hr_manager': 3, 'recruiter': 3, 'hr_executive': 3
         }
@@ -393,8 +394,8 @@ def create_job_role_notifications(sender, instance, created, **kwargs):
     if created:
         # Get all users who should be notified
         users_to_notify = User.objects.filter(
-            models.Q(role__in=['founder', 'co_founder', 'ceo', 'cfo']) |  # Level 1
-            models.Q(role__in=['cto', 'coo', 'project_head']) |   # Level 2
+            models.Q(role__in=['founder', 'co_founder']) |  # Level 1
+            models.Q(role__in=['ceo', 'cfo', 'cto', 'coo', 'project_head']) |   # Level 2
             models.Q(role__in=['hr_manager', 'recruiter', 'hr_executive'])  # Level 3
         ).distinct()
         
@@ -412,7 +413,7 @@ def create_submission_notifications(sender, instance, created, **kwargs):
     if created:
         # Notify Level 1 users if submission is a decline
         if instance.decision == 'decline' and instance.user.get_level() != 1:
-            level1_users = User.objects.filter(role__in=['founder', 'co_founder', 'ceo', 'cfo'])
+            level1_users = User.objects.filter(role__in=['founder', 'co_founder'])
             for user in level1_users:
                 Notification.objects.create(
                     user=user,

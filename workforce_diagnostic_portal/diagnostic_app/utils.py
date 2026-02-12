@@ -57,9 +57,9 @@ def get_job_progress(job_role):
 def get_level_submissions(job_role, level):
     """Get all submissions for a specific level"""
     if level == 1:
-        roles = ['founder', 'co_founder', 'ceo', 'cfo']
+        roles = ['founder', 'co_founder']
     elif level == 2:
-        roles = ['cto', 'coo', 'project_head']
+        roles = ['ceo', 'cfo', 'cto', 'coo', 'project_head']
     else:  # level == 3
         roles = ['hr_manager', 'recruiter', 'hr_executive']
     

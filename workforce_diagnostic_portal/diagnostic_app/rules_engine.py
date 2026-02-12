@@ -152,7 +152,7 @@ class OverallDecisionEngine:
         
         # Rule 1: Any high risk from Level 1 results in high overall risk
         level1_high = submissions.filter(
-            user__role__in=['founder', 'co_founder', 'ceo', 'cfo'],
+            user__role__in=['founder', 'co_founder'],
             risk_level='high'
         ).exists()
         

@@ -58,7 +58,7 @@
                     </td>
                     <td style="padding: 12px;">
                         <a href="{% url 'job_role_detail' job.id %}" class="btn btn-sm btn-primary">View</a>
-                        {% if job.user_status != 'completed' %}
+                        {% if job.user_status != 'completed' and job.can_assess %}
                         <a href="{% url 'diagnostic' job.id %}" class="btn btn-sm btn-success">Assess</a>
                         {% endif %}
                     </td>
