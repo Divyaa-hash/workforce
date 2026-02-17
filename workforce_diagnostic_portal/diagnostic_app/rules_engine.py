@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import DiagnosticSubmission, JobRole
+from .models import DiagnosticSubmission, JobRole, AuditLog
 
 
 class RulesEngine:
@@ -170,33 +170,47 @@ class OverallDecisionEngine:
         return 'low'
     
     @staticmethod
-    def get_final_recommendation(job_role):
-        """Generate final hiring recommendation"""
-        from .models import DiagnosticSubmission  # Import here to avoid circular import
-        
+    def get_final_recommendation(job_role, user=None, ip_address=None):
+        """Generate final hiring recommendation and log to AuditLog"""
         submissions = DiagnosticSubmission.objects.filter(job_role=job_role)
         overall_risk = OverallDecisionEngine.calculate_overall_risk(job_role)
-        
+        decline_categories = list(submissions.filter(
+            decision='decline'
+        ).values_list('decline_category', flat=True).distinct())
+
         # Rule-based final decision
         if overall_risk == 'low':
-            return {
+            recommendation = {
                 'decision': 'Proceed with hiring',
                 'risk': 'low',
                 'conditions': 'No special conditions required'
             }
         elif overall_risk == 'medium':
-            return {
+            recommendation = {
                 'decision': 'Proceed with conditions',
                 'risk': 'medium',
                 'conditions': 'Address medium risk areas before proceeding'
             }
         else:  # high risk
-            decline_reasons = submissions.filter(
-                decision='decline'
-            ).values_list('decline_category', flat=True).distinct()
-            
-            return {
+            recommendation = {
                 'decision': 'Delay or cancel hiring',
                 'risk': 'high',
-                'conditions': f'Address critical issues: {", ".join(decline_reasons)}'
+                'conditions': f'Address critical issues: {", ".join(decline_categories)}'
             }
+
+        # Log final decision to audit
+        AuditLog.objects.create(
+            event_type='final_decision_generated',
+            user=user,
+            entity_type='job_role',
+            entity_id=job_role.id,
+            metadata={
+                'final_decision': recommendation['decision'],
+                'overall_risk': recommendation['risk'],
+                'conditions': recommendation['conditions'],
+                'decline_categories': decline_categories,
+            },
+            ip_address=ip_address,
+        )
+
+        return recommendation

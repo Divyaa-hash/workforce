@@ -389,8 +389,16 @@
                     
                     {% if user.get_level == 1 %}
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{% url 'analytics' %}" class="nav-link {% if '/analytics' in request.path %}active{% endif %}">
                             📈 Analytics
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_superuser or user.role == 'founder' or user.role == 'co_founder' %}
+                    <li class="nav-item">
+                        <a href="{% url 'audit_logs' %}" class="nav-link {% if '/audit-logs' in request.path %}active{% endif %}">
+                            🧾 Audit Logs
                         </a>
                     </li>
                     {% endif %}

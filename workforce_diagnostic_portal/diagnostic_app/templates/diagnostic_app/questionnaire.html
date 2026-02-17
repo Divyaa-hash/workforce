@@ -20,9 +20,220 @@
     <form method="post" class="diagnostic-form" id="diagnostic-assessment-form">
         {% csrf_token %}
         
-        <!-- Role-specific questions based on user level -->
-        {% if user.get_level == 1 %}
-        <!-- Level 1 Questions -->
+        <!-- Role-specific questions based on user role -->
+        {% if user.role == 'founder' %}
+        <!-- Founder Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #065f46;">Founder - Strategic Assessment</h3>
+            
+            <div class="form-group">
+                <label>1. Vision Alignment (1-5, where 5 is excellent alignment)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well does this role align with your company vision?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_vision_alignment" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Strategic Fit (1-5, where 5 is perfect fit)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well does this role fit your strategic goals?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_strategic_fit" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Market Positioning Impact (1-5, where 5 is strong impact)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How does this role strengthen your market positioning?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_market_positioning" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Resource Allocation Priority</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_resource_priority" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_resource_priority" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_resource_priority" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Equity Consideration</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_equity_consideration" value="not_applicable" required> Not Applicable
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_equity_consideration" value="equity_required" required> Equity Required
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_equity_consideration" value="cash_only" required> Cash Only
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_founder_equity_consideration" value="hybrid" required> Hybrid (Cash + Equity)
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        {% elif user.role == 'co_founder' %}
+        <!-- Co-Founder Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #065f46;">Co-Founder - Partnership Assessment</h3>
+            
+            <div class="form-group">
+                <label>1. Partnership Dynamics (1-5, where 5 is excellent)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well does this role complement partnership dynamics?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_partnership_dynamics" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Complementary Skills (1-5, where 5 is highly complementary)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How complementary are the skills to the existing team?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_complementary_skills" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Team Chemistry (1-5, where 5 is excellent)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well will this role integrate with team chemistry?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_team_chemistry" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Decision-Making Alignment</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_decision_making" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_decision_making" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_decision_making" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Culture and Values Alignment (1-5, where 5 is excellent)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well aligned with company culture and values?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cofounder_culture_fit" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        {% elif user.role == 'cfo' %}
+        <!-- CFO Questions -->
+        <div style="margin-bottom: 40px;">
+            <h3 style="margin-bottom: 20px; color: #065f46;">CFO - Financial Assessment</h3>
+            
+            <div class="form-group">
+                <label>1. ROI Projection Score (1-5, where 5 is Very High)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_roi_analysis" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Cash Flow Impact (1-5, where 5 is Positive)</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_cash_flow_impact" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Aligned with Annual Budget?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_budget_alignment" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_budget_alignment" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Funding Source</label>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_funding_source" value="operational" required> Operational Budget
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_funding_source" value="contingency" required> Contingency Fund
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_funding_source" value="new_funding" required> Requires New Funding
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q0_funding_source" value="cost_center" required> Cost Center Budget
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        {% elif user.get_level == 1 %}
+        <!-- CEO or other Level 1 Questions -->
         <div style="margin-bottom: 40px;">
             <h3 style="margin-bottom: 20px; color: #065f46;">Level 1 - Strategic Questions</h3>
             

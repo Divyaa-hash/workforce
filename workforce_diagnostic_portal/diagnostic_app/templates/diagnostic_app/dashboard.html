@@ -172,5 +172,43 @@
         </p>
     </div>
     {% endif %}
+
+    {% if recent_audit_logs %}
+    <div style="margin-top: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Recent Audit Logs</h2>
+            <a href="{% url 'audit_logs' %}" class="btn btn-secondary">View All</a>
+        </div>
+
+        <div class="card">
+            {% for log in recent_audit_logs %}
+            <a href="{% url 'audit_log_detail' log.id %}" style="display: block; color: inherit; text-decoration: none;">
+                <div style="padding: 15px; {% if not forloop.last %}border-bottom: 1px solid #e5e7eb;{% endif %}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; margin-bottom: 4px;">
+                                {{ log.event_type }}
+                                {% if log.entity_type %}
+                                    – {{ log.entity_type }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}
+                                {% endif %}
+                            </div>
+                            <div style="color: #6b7280; font-size: 13px;">
+                                {% if log.user %}
+                                    By {{ log.user.username }} ({{ log.user.get_role_display }})
+                                {% else %}
+                                    Anonymous
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="color: #6b7280; font-size: 13px; text-align: right;">
+                            {{ log.created_at|timesince }} ago
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Audit Log Detail{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Audit Log Detail</h1>
+            <p>Full details for a single audit event</p>
+        </div>
+        <a href="{% url 'audit_logs' %}" class="btn btn-secondary">← Back to Audit Logs</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 16px;">Event Summary</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div>
+            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em;">Event Type</div>
+            <div style="font-weight: 600;">{{ log.event_type }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em;">Timestamp</div>
+            <div>{{ log.created_at|date:"Y-m-d H:i:s" }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em;">User</div>
+            <div>
+                {% if log.user %}
+                    {{ log.user.username }} ({{ log.user.get_role_display }})
+                {% else %}
+                    <span style="color: #6b7280;">Anonymous</span>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em;">IP Address</div>
+            <div>{{ log.ip_address|default:"—" }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: .05em;">Entity</div>
+            <div>
+                {% if log.entity_type %}
+                    {{ log.entity_type }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}
+                {% else %}
+                    —
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom: 12px;">Metadata</h3>
+    {% if log.metadata %}
+    <div style="padding: 16px; background: #f9fafb; border-radius: 10px; border: 1px solid #e5e7eb;">
+        <dl style="display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 8px 16px; margin: 0;">
+            {% for key, value in log.metadata.items %}
+            <div style="display: contents;">
+                <dt style="font-weight: 600; color: #4b5563;">{{ key }}</dt>
+                <dd style="margin: 0; color: #111827; word-break: break-word;">{{ value }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+    {% else %}
+    <p style="color: #6b7280;">No additional metadata recorded for this event.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

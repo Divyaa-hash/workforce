@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Count
 from django.urls import reverse
+from django.utils import timezone
 from .forms import CustomUserCreationForm, LoginForm, JobRoleForm, DiagnosticForm
-from .models import User, JobRole, DiagnosticSubmission, RoleAssignment, Notification
+from .models import User, JobRole, DiagnosticSubmission, RoleAssignment, Notification, AuditLog
 
 # Authentication Views
 def login_view(request):
@@ -23,20 +24,52 @@ def login_view(request):
         
         # Authenticate user
         user = authenticate(request, username=username, password=password)
-        
+        ip_address = request.META.get('REMOTE_ADDR')
+
         if user is not None:
             print(f"User authenticated: {user.username}, actual role: {user.role}")
-            
+
             # Check if selected role matches user's actual role
             if user.role == role:
                 login(request, user)
+                AuditLog.objects.create(
+                    event_type='login_success',
+                    user=user,
+                    metadata={
+                        'selected_role': role,
+                        'actual_role': user.role,
+                        'timestamp': timezone.now().isoformat(),
+                    },
+                    ip_address=ip_address,
+                )
                 messages.success(request, f'Welcome, {user.get_role_display()}!')
                 level = user.get_level()
                 dashboard_url = reverse('dashboard')
                 return redirect(f'{dashboard_url}?level={level}')
             else:
+                AuditLog.objects.create(
+                    event_type='login_failure',
+                    user=user,
+                    metadata={
+                        'username': username,
+                        'selected_role': role,
+                        'actual_role': user.role,
+                        'reason': 'role_mismatch',
+                    },
+                    ip_address=ip_address,
+                )
                 messages.error(request, f'Please select correct role: {user.get_role_display()}')
         else:
+            AuditLog.objects.create(
+                event_type='login_failure',
+                user=None,
+                metadata={
+                    'username': username,
+                    'selected_role': role,
+                    'reason': 'invalid_credentials',
+                },
+                ip_address=ip_address,
+            )
             print("Authentication failed")
             messages.error(request, 'Invalid username or password.')
     
@@ -83,15 +116,65 @@ def dashboard_view(request):
     
     # Get recent notifications
     notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')[:5]
+
+    # Get recent audit logs for admins / Level 1 users
+    recent_audit_logs = None
+    if request.user.is_superuser or request.user.get_level() == 1:
+        recent_audit_logs = AuditLog.objects.select_related('user').order_by('-created_at')[:5]
     
     context = {
         'stats': stats,
         'jobs': jobs,
         'notifications': notifications,
+        'recent_audit_logs': recent_audit_logs,
         'user_level': request.user.get_level(),
     }
     
     return render(request, 'diagnostic_app/dashboard.html', context)
+
+
+@login_required
+def analytics_view(request):
+    """
+    High-level analytics for Level 1 users (Founder / Co-Founder).
+    """
+    if request.user.get_level() != 1:
+        messages.error(request, 'Only Level 1 users (Founders / Co-Founders) can view analytics.')
+        return redirect('dashboard')
+
+    # Job role stats
+    total_jobs = JobRole.objects.count()
+    jobs_by_status = (
+        JobRole.objects
+        .values('status')
+        .annotate(count=Count('id'))
+        .order_by('status')
+    )
+
+    # Diagnostic submission stats
+    total_submissions = DiagnosticSubmission.objects.count()
+    submissions_by_decision = (
+        DiagnosticSubmission.objects
+        .values('decision')
+        .annotate(count=Count('id'))
+        .order_by('decision')
+    )
+    submissions_by_risk = (
+        DiagnosticSubmission.objects
+        .values('risk_level')
+        .annotate(count=Count('id'))
+        .order_by('risk_level')
+    )
+
+    context = {
+        'total_jobs': total_jobs,
+        'jobs_by_status': jobs_by_status,
+        'total_submissions': total_submissions,
+        'submissions_by_decision': submissions_by_decision,
+        'submissions_by_risk': submissions_by_risk,
+    }
+
+    return render(request, 'diagnostic_app/analytics.html', context)
 
 # Job Role Views
 @login_required
@@ -276,11 +359,35 @@ def diagnostic_view(request, job_id):
                 decline_category=request.POST.get('decline_category', ''),
             )
             
-            # Set role-specific questions based on user level
+            # Set role-specific questions based on user role
+            user_role = request.user.role
             user_level = request.user.get_level()
             
-            if user_level == 1:
-                # Level 1 questions (shared by all Level 1 roles)
+            if user_role == 'founder':
+                # Founder-specific questions
+                submission.q_founder_vision_alignment = parse_int(request.POST.get('q_founder_vision_alignment'))
+                submission.q_founder_strategic_fit = parse_int(request.POST.get('q_founder_strategic_fit'))
+                submission.q_founder_market_positioning = parse_int(request.POST.get('q_founder_market_positioning'))
+                submission.q_founder_resource_priority = request.POST.get('q_founder_resource_priority')
+                submission.q_founder_equity_consideration = request.POST.get('q_founder_equity_consideration')
+            
+            elif user_role == 'co_founder':
+                # Co-Founder-specific questions
+                submission.q_cofounder_partnership_dynamics = parse_int(request.POST.get('q_cofounder_partnership_dynamics'))
+                submission.q_cofounder_complementary_skills = parse_int(request.POST.get('q_cofounder_complementary_skills'))
+                submission.q_cofounder_team_chemistry = parse_int(request.POST.get('q_cofounder_team_chemistry'))
+                submission.q_cofounder_decision_making = request.POST.get('q_cofounder_decision_making')
+                submission.q_cofounder_culture_fit = parse_int(request.POST.get('q_cofounder_culture_fit'))
+            
+            elif user_role == 'cfo':
+                # CFO-specific questions
+                submission.q0_roi_analysis = parse_int(request.POST.get('q0_roi_analysis'))
+                submission.q0_cash_flow_impact = parse_int(request.POST.get('q0_cash_flow_impact'))
+                submission.q0_budget_alignment = parse_bool(request.POST.get('q0_budget_alignment'))
+                submission.q0_funding_source = request.POST.get('q0_funding_source')
+            
+            elif user_level == 1:
+                # CEO or other Level 1 questions (shared by all Level 1 roles except founder/co_founder/cfo)
                 submission.q1_business_alignment = parse_int(request.POST.get('q1_business_alignment'))
                 submission.q2_financial_risk = parse_int(request.POST.get('q2_financial_risk'))
                 submission.q3_long_term_impact = parse_int(request.POST.get('q3_long_term_impact'))
@@ -361,31 +468,90 @@ def mark_notifications_read(request):
 # Results View
 @login_required
 def results_view(request, job_id):
+    from .rules_engine import OverallDecisionEngine
+
     job = get_object_or_404(JobRole, id=job_id)
-    
+
     # Check if user is Level 1
     if request.user.get_level() != 1:
         messages.error(request, 'Only Level 1 users can view results.')
         return redirect('dashboard')
-    
+
     submissions = DiagnosticSubmission.objects.filter(job_role=job)
-    
+
     # Group submissions by level
     level1_subs = submissions.filter(user__role__in=['founder', 'co_founder'])
     level2_subs = submissions.filter(user__role__in=['ceo', 'cfo', 'cto', 'coo', 'project_head'])
     level3_subs = submissions.filter(user__role__in=['hr_manager', 'recruiter', 'hr_executive'])
-    
+
     # Calculate overall progress
     total_assignments = RoleAssignment.objects.filter(job_role=job).count()
     completed_assignments = RoleAssignment.objects.filter(job_role=job, is_completed=True).count()
     progress = round((completed_assignments / total_assignments * 100) if total_assignments > 0 else 0, 1)
-    
+
+    # Generate and log final decision
+    ip_address = request.META.get('REMOTE_ADDR')
+    recommendation = OverallDecisionEngine.get_final_recommendation(
+        job, user=request.user, ip_address=ip_address
+    )
+
     context = {
         'job': job,
         'level1_subs': level1_subs,
         'level2_subs': level2_subs,
         'level3_subs': level3_subs,
         'progress': progress,
+        'recommendation': recommendation,
     }
-    
+
     return render(request, 'diagnostic_app/results.html', context)
+
+
+@login_required
+def audit_logs_view(request):
+    """Simple audit log viewer for admins / founders / co-founders."""
+    if not (
+        request.user.is_superuser
+        or request.user.role in ['founder', 'co_founder']
+    ):
+        messages.error(request, 'Only admins, founders and co-founders can view audit logs.')
+        return redirect('dashboard')
+
+    logs = AuditLog.objects.select_related('user').all()
+
+    event_type = request.GET.get('event_type', '').strip()
+    username = request.GET.get('username', '').strip()
+
+    if event_type:
+        logs = logs.filter(event_type=event_type)
+    if username:
+        logs = logs.filter(user__username__icontains=username)
+
+    logs = logs.order_by('-created_at')[:200]
+
+    context = {
+        'logs': logs,
+        'event_type_filter': event_type,
+        'username_filter': username,
+    }
+
+    return render(request, 'diagnostic_app/audit_logs.html', context)
+
+
+@login_required
+def audit_log_detail_view(request, log_id):
+    """Detailed view for a single audit log entry (admin / founders / co-founders)."""
+    if not (
+        request.user.is_superuser
+        or request.user.role in ['founder', 'co_founder']
+    ):
+        messages.error(request, 'Only admins, founders and co-founders can view audit logs.')
+        return redirect('dashboard')
+
+    log = get_object_or_404(AuditLog.objects.select_related('user'), id=log_id)
+
+    context = {
+        'log': log,
+    }
+
+    return render(request, 'diagnostic_app/audit_log_detail.html', context)

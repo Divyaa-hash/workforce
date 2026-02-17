@@ -131,7 +131,7 @@ class DiagnosticSubmission(models.Model):
                                            ('cost_center', 'Cost Center Budget')
                                        ], null=True, blank=True)
     
-    # Business Alignment Questions (Shared with other Level 1 roles)
+    # Business Alignment Questions (Shared with other Level 1 roles - CEO)
     q1_business_alignment = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     q2_financial_risk = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     q3_long_term_impact = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
@@ -139,6 +139,50 @@ class DiagnosticSubmission(models.Model):
     q5_strategic_priority = models.CharField(max_length=10, choices=[
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
     ], null=True, blank=True)
+    
+    # Founder-Specific Questions
+    q_founder_vision_alignment = models.IntegerField(verbose_name='Vision Alignment', choices=[(i, str(i)) for i in range(1, 6)], 
+                                                     help_text='How well does this role align with your company vision? (1=Poor, 5=Excellent)', 
+                                                     null=True, blank=True)
+    q_founder_equity_consideration = models.CharField(verbose_name='Equity Consideration', max_length=20,
+                                                      choices=[
+                                                          ('not_applicable', 'Not Applicable'),
+                                                          ('equity_required', 'Equity Required'),
+                                                          ('cash_only', 'Cash Only'),
+                                                          ('hybrid', 'Hybrid (Cash + Equity)')
+                                                      ], null=True, blank=True)
+    q_founder_market_positioning = models.IntegerField(verbose_name='Market Positioning Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                       help_text='How does this role strengthen market positioning? (1=Weak, 5=Strong)', 
+                                                       null=True, blank=True)
+    q_founder_resource_priority = models.CharField(verbose_name='Resource Allocation Priority', max_length=10,
+                                                   choices=[
+                                                       ('low', 'Low'),
+                                                       ('medium', 'Medium'),
+                                                       ('high', 'High')
+                                                   ], null=True, blank=True)
+    q_founder_strategic_fit = models.IntegerField(verbose_name='Strategic Fit', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How well does this role fit strategic goals? (1=Poor Fit, 5=Perfect Fit)', 
+                                                 null=True, blank=True)
+    
+    # Co-Founder-Specific Questions
+    q_cofounder_partnership_dynamics = models.IntegerField(verbose_name='Partnership Dynamics', choices=[(i, str(i)) for i in range(1, 6)],
+                                                           help_text='How well does this role complement partnership dynamics? (1=Poor, 5=Excellent)', 
+                                                           null=True, blank=True)
+    q_cofounder_complementary_skills = models.IntegerField(verbose_name='Complementary Skills', choices=[(i, str(i)) for i in range(1, 6)],
+                                                          help_text='How complementary are the skills to existing team? (1=Overlap, 5=Highly Complementary)', 
+                                                          null=True, blank=True)
+    q_cofounder_team_chemistry = models.IntegerField(verbose_name='Team Chemistry', choices=[(i, str(i)) for i in range(1, 6)],
+                                                     help_text='How well will this role integrate with team chemistry? (1=Poor, 5=Excellent)', 
+                                                     null=True, blank=True)
+    q_cofounder_decision_making = models.CharField(verbose_name='Decision-Making Alignment', max_length=10,
+                                                  choices=[
+                                                      ('low', 'Low'),
+                                                      ('medium', 'Medium'),
+                                                      ('high', 'High')
+                                                  ], null=True, blank=True)
+    q_cofounder_culture_fit = models.IntegerField(verbose_name='Culture and Values Alignment', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How well aligned with company culture and values? (1=Poor, 5=Excellent)', 
+                                                 null=True, blank=True)
     
     # Level 2 Questions (CTO/COO/Project Head)
     q6_skill_availability = models.CharField(max_length=10, choices=[
@@ -181,6 +225,8 @@ class DiagnosticSubmission(models.Model):
     
     def save(self, *args, **kwargs):
         """Override save to calculate risk and guidance"""
+        is_new = self.pk is None
+
         # Calculate risk before saving
         self.calculate_risk()
         
@@ -189,36 +235,147 @@ class DiagnosticSubmission(models.Model):
             self.generate_corrective_guidance()
         
         super().save(*args, **kwargs)
+
+        # Audit only on initial creation, not every update
+        if is_new:
+            # Simple readiness score derived inversely from risk level
+            readiness_map = {
+                'low': 100,
+                'medium': 60,
+                'high': 30,
+            }
+            readiness_score = readiness_map.get(self.risk_level)
+
+            # Numeric representation of risk level (higher is riskier)
+            risk_score_from_level = {
+                'low': 0,
+                'medium': 1,
+                'high': 2,
+            }.get(self.risk_level)
+
+            AuditLog.objects.create(
+                event_type='diagnostic_submitted',
+                user=self.user,
+                entity_type='diagnostic_submission',
+                entity_id=self.id,
+                metadata={
+                    'job_role_id': self.job_role_id,
+                    'job_role_title': self.job_role.title if self.job_role_id else None,
+                    'decision': self.decision,
+                    'risk_level': self.risk_level,
+                    'risk_score_from_level': risk_score_from_level,
+                    'readiness_score': readiness_score,
+                    'user_level': self.user.get_level(),
+                    'user_role': self.user.role,
+                },
+            )
     
     def calculate_risk(self):
         """Rule-based risk calculation"""
+        user_role = self.user.role
         user_level = self.user.get_level()
         
         if user_level == 1:  # Level 1 roles
             risk_score = 0
             
-            # Common Level 1 Rules
-            # Rule 1: Budget approval
-            if not self.q4_budget_approval:
-                risk_score += 3
+            # Role-specific risk calculation
+            if user_role == 'founder':
+                # Founder-specific risk rules
+                # Rule 1: Vision alignment
+                if self.q_founder_vision_alignment and self.q_founder_vision_alignment <= 2:
+                    risk_score += 3
+                elif self.q_founder_vision_alignment and self.q_founder_vision_alignment >= 4:
+                    risk_score -= 1
+                
+                # Rule 2: Strategic fit
+                if self.q_founder_strategic_fit and self.q_founder_strategic_fit <= 2:
+                    risk_score += 2
+                elif self.q_founder_strategic_fit and self.q_founder_strategic_fit >= 4:
+                    risk_score -= 1
+                
+                # Rule 3: Market positioning
+                if self.q_founder_market_positioning and self.q_founder_market_positioning <= 2:
+                    risk_score += 2
+                
+                # Rule 4: Resource priority
+                if self.q_founder_resource_priority == 'low':
+                    risk_score += 1
+                elif self.q_founder_resource_priority == 'high':
+                    risk_score -= 1
+                
+                # Rule 5: Equity consideration (if equity required but not feasible)
+                if self.q_founder_equity_consideration == 'equity_required':
+                    risk_score += 1
             
-            # Rule 2: Financial risk
-            if self.q2_financial_risk and self.q2_financial_risk >= 4:
-                risk_score += 2
+            elif user_role == 'co_founder':
+                # Co-Founder-specific risk rules
+                # Rule 1: Partnership dynamics
+                if self.q_cofounder_partnership_dynamics and self.q_cofounder_partnership_dynamics <= 2:
+                    risk_score += 3
+                elif self.q_cofounder_partnership_dynamics and self.q_cofounder_partnership_dynamics >= 4:
+                    risk_score -= 1
+                
+                # Rule 2: Complementary skills
+                if self.q_cofounder_complementary_skills and self.q_cofounder_complementary_skills <= 2:
+                    risk_score += 2
+                elif self.q_cofounder_complementary_skills and self.q_cofounder_complementary_skills >= 4:
+                    risk_score -= 1
+                
+                # Rule 3: Team chemistry
+                if self.q_cofounder_team_chemistry and self.q_cofounder_team_chemistry <= 2:
+                    risk_score += 2
+                
+                # Rule 4: Decision-making alignment
+                if self.q_cofounder_decision_making == 'low':
+                    risk_score += 1
+                elif self.q_cofounder_decision_making == 'high':
+                    risk_score -= 1
+                
+                # Rule 5: Culture fit
+                if self.q_cofounder_culture_fit and self.q_cofounder_culture_fit <= 2:
+                    risk_score += 1
             
-            # Rule 3: Strategic priority
-            if self.q5_strategic_priority == 'low':
-                risk_score += 1
-            elif self.q5_strategic_priority == 'high':
-                risk_score -= 1
+            elif user_role == 'cfo':
+                # CFO-specific risk rules (using q0_* fields)
+                # Rule 1: Budget alignment
+                if not self.q0_budget_alignment:
+                    risk_score += 3
+                
+                # Rule 2: ROI analysis
+                if self.q0_roi_analysis and self.q0_roi_analysis <= 2:
+                    risk_score += 2
+                
+                # Rule 3: Cash flow impact
+                if self.q0_cash_flow_impact and self.q0_cash_flow_impact <= 2:
+                    risk_score += 2
+                
+                # Rule 4: Funding source
+                if self.q0_funding_source == 'new_funding':
+                    risk_score += 1
             
-            # Rule 4: Business alignment
-            if self.q1_business_alignment and self.q1_business_alignment <= 2:
-                risk_score += 2
-            
-            # Rule 5: Long-term impact
-            if self.q3_long_term_impact and self.q3_long_term_impact <= 2:
-                risk_score += 1
+            else:  # CEO or other Level 1 roles - use common Level 1 rules
+                # Common Level 1 Rules
+                # Rule 1: Budget approval
+                if not self.q4_budget_approval:
+                    risk_score += 3
+                
+                # Rule 2: Financial risk
+                if self.q2_financial_risk and self.q2_financial_risk >= 4:
+                    risk_score += 2
+                
+                # Rule 3: Strategic priority
+                if self.q5_strategic_priority == 'low':
+                    risk_score += 1
+                elif self.q5_strategic_priority == 'high':
+                    risk_score -= 1
+                
+                # Rule 4: Business alignment
+                if self.q1_business_alignment and self.q1_business_alignment <= 2:
+                    risk_score += 2
+                
+                # Rule 5: Long-term impact
+                if self.q3_long_term_impact and self.q3_long_term_impact <= 2:
+                    risk_score += 1
             
             # Determine risk level
             if risk_score >= 3:
@@ -349,6 +506,36 @@ class DiagnosticSubmission(models.Model):
             return "HR / Operations Support"
 
 
+class AuditLog(models.Model):
+    """Generic audit log for key system events"""
+    EVENT_TYPES = [
+        ('login_success', 'Login Success'),
+        ('login_failure', 'Login Failure'),
+        ('diagnostic_submitted', 'Diagnostic Submitted'),
+        ('final_decision_generated', 'Final Decision Generated'),
+    ]
+    
+    ENTITY_TYPES = [
+        ('job_role', 'Job Role'),
+        ('diagnostic_submission', 'Diagnostic Submission'),
+    ]
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='audit_logs')
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPES)
+    entity_type = models.CharField(max_length=50, choices=ENTITY_TYPES, blank=True)
+    entity_id = models.PositiveIntegerField(null=True, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        user_str = self.user.username if self.user else 'anonymous'
+        return f"{self.event_type} - {user_str} @ {self.created_at}"
+
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
@@ -382,6 +569,8 @@ class Notification(models.Model):
             return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
         else:
             return "Just now"
+
+
 
 
 # Signal to create notifications when job role is created

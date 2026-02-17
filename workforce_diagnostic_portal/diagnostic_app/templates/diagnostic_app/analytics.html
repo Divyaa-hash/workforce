@@ -1,0 +1,96 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analytics Overview</h1>
+    <p>High-level insights across all job roles and diagnostic submissions.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 32px;">
+    <div class="card">
+        <h3 style="font-size: 26px; margin-bottom: 4px;">{{ total_jobs }}</h3>
+        <p style="color: #6b7280;">Total Job Roles</p>
+    </div>
+    <div class="card">
+        <h3 style="font-size: 26px; margin-bottom: 4px;">{{ total_submissions }}</h3>
+        <p style="color: #6b7280;">Total Diagnostic Submissions</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+    <div class="card">
+        <h2 style="margin-bottom: 16px;">Job Roles by Status</h2>
+        {% if jobs_by_status %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th style="text-align: right;">Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in jobs_by_status %}
+                <tr>
+                    <td>{{ row.status|capfirst }}</td>
+                    <td style="text-align: right;">{{ row.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #6b7280;">No job roles created yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 style="margin-bottom: 16px;">Submissions by Decision</h2>
+        {% if submissions_by_decision %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Decision</th>
+                    <th style="text-align: right;">Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in submissions_by_decision %}
+                <tr>
+                    <td>{{ row.decision|default:"—"|capfirst }}</td>
+                    <td style="text-align: right;">{{ row.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #6b7280;">No submissions recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 style="margin-bottom: 16px;">Submissions by Risk Level</h2>
+        {% if submissions_by_risk %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Risk</th>
+                    <th style="text-align: right;">Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in submissions_by_risk %}
+                <tr>
+                    <td>{{ row.risk_level|default:"—" }}</td>
+                    <td style="text-align: right;">{{ row.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #6b7280;">No risk evaluations available yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

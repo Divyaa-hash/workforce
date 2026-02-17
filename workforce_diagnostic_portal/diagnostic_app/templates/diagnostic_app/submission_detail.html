@@ -18,8 +18,8 @@
 <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <div>
-            <h2 style="margin-bottom: 10px;">Senior Full Stack Developer</h2>
-            <p style="color: #6b7280;">Submitted by: {{ user.get_role_display }} {{ user.username }}</p>
+            <h2 style="margin-bottom: 10px;">{{ submission.job_role.title }}</h2>
+            <p style="color: #6b7280;">Submitted by: {{ submission.user.get_role_display }} {{ submission.user.username }}</p>
         </div>
         <div style="text-align: right;">
             <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">
@@ -29,7 +29,7 @@
                 <span style="color: #ef4444;">❌ Declined</span>
                 {% endif %}
             </div>
-            <div style="color: #6b7280;">Submitted: Today</div>
+            <div style="color: #6b7280;">Submitted: {{ submission.submitted_at|date:"M d, Y" }}</div>
         </div>
     </div>
     
@@ -64,91 +64,231 @@
     <div style="margin-bottom: 30px;">
         <h3 style="margin-bottom: 20px;">Your Responses</h3>
         
-        {% if user.get_level == 1 %}
-        <!-- Level 1 Responses -->
+        {% if submission.user.role == 'founder' %}
+        <!-- Founder Responses -->
         <div style="display: grid; gap: 15px;">
+            {% if submission.q_founder_vision_alignment %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Business Alignment</div>
-                <div>Rating: 4/5</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Vision Alignment</div>
+                <div>Rating: {{ submission.q_founder_vision_alignment }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q_founder_strategic_fit %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Financial Risk Assessment</div>
-                <div>Rating: 2/5</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Strategic Fit</div>
+                <div>Rating: {{ submission.q_founder_strategic_fit }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q_founder_market_positioning %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Long-term Impact</div>
-                <div>Rating: 5/5</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Market Positioning Impact</div>
+                <div>Rating: {{ submission.q_founder_market_positioning }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q_founder_resource_priority %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Budget Approved</div>
-                <div>Yes</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Resource Allocation Priority</div>
+                <div>{{ submission.get_q_founder_resource_priority_display|title }}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q_founder_equity_consideration %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
-                <div style="font-weight: 600; margin-bottom: 5px;">Strategic Priority</div>
-                <div>High</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Equity Consideration</div>
+                <div>{{ submission.get_q_founder_equity_consideration_display|title }}</div>
             </div>
+            {% endif %}
         </div>
         
-        {% elif user.get_level == 2 %}
+        {% elif submission.user.role == 'co_founder' %}
+        <!-- Co-Founder Responses -->
+        <div style="display: grid; gap: 15px;">
+            {% if submission.q_cofounder_partnership_dynamics %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Partnership Dynamics</div>
+                <div>Rating: {{ submission.q_cofounder_partnership_dynamics }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q_cofounder_complementary_skills %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Complementary Skills</div>
+                <div>Rating: {{ submission.q_cofounder_complementary_skills }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q_cofounder_team_chemistry %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Team Chemistry</div>
+                <div>Rating: {{ submission.q_cofounder_team_chemistry }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q_cofounder_decision_making %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Decision-Making Alignment</div>
+                <div>{{ submission.get_q_cofounder_decision_making_display|title }}</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q_cofounder_culture_fit %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Culture and Values Alignment</div>
+                <div>Rating: {{ submission.q_cofounder_culture_fit }}/5</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% elif submission.user.role == 'cfo' %}
+        <!-- CFO Responses -->
+        <div style="display: grid; gap: 15px;">
+            {% if submission.q0_roi_analysis %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">ROI Projection Score</div>
+                <div>Rating: {{ submission.q0_roi_analysis }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q0_cash_flow_impact %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Cash Flow Impact</div>
+                <div>Rating: {{ submission.q0_cash_flow_impact }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q0_budget_alignment is not None %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Aligned with Annual Budget</div>
+                <div>{% if submission.q0_budget_alignment %}Yes{% else %}No{% endif %}</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q0_funding_source %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Funding Source</div>
+                <div>{{ submission.get_q0_funding_source_display|title }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% elif submission.user.get_level == 1 %}
+        <!-- CEO or other Level 1 Responses -->
+        <div style="display: grid; gap: 15px;">
+            {% if submission.q1_business_alignment %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Business Alignment</div>
+                <div>Rating: {{ submission.q1_business_alignment }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q2_financial_risk %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Financial Risk Assessment</div>
+                <div>Rating: {{ submission.q2_financial_risk }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q3_long_term_impact %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Long-term Impact</div>
+                <div>Rating: {{ submission.q3_long_term_impact }}/5</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q4_budget_approval is not None %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Budget Approved</div>
+                <div>{% if submission.q4_budget_approval %}Yes{% else %}No{% endif %}</div>
+            </div>
+            {% endif %}
+            
+            {% if submission.q5_strategic_priority %}
+            <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 5px;">Strategic Priority</div>
+                <div>{{ submission.get_q5_strategic_priority_display|title }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% elif submission.user.get_level == 2 %}
         <!-- Level 2 Responses -->
         <div style="display: grid; gap: 15px;">
+            {% if submission.q6_skill_availability %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Skill Availability</div>
-                <div>Medium</div>
+                <div>{{ submission.get_q6_skill_availability_display|title }}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q7_execution_feasibility %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Execution Feasibility</div>
-                <div>Rating: 4/5</div>
+                <div>Rating: {{ submission.q7_execution_feasibility }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q8_team_dependency %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Team Dependency</div>
-                <div>Rating: 3/5</div>
+                <div>Rating: {{ submission.q8_team_dependency }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q9_timeline_risk %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Timeline Risk</div>
-                <div>Low</div>
+                <div>{{ submission.get_q9_timeline_risk_display|title }}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q10_mentor_available is not None %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Mentor Available</div>
-                <div>Yes</div>
+                <div>{% if submission.q10_mentor_available %}Yes{% else %}No{% endif %}</div>
             </div>
+            {% endif %}
         </div>
         
         {% else %}
         <!-- Level 3 Responses -->
         <div style="display: grid; gap: 15px;">
+            {% if submission.q11_talent_availability %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Talent Availability</div>
-                <div>Low</div>
+                <div>{{ submission.get_q11_talent_availability_display|title }}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q12_cost_validation is not None %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Cost Validation</div>
-                <div>Yes</div>
+                <div>{% if submission.q12_cost_validation %}Yes{% else %}No{% endif %}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q13_process_readiness %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Process Readiness</div>
-                <div>Rating: 3/5</div>
+                <div>Rating: {{ submission.q13_process_readiness }}/5</div>
             </div>
+            {% endif %}
             
+            {% if submission.q14_onboarding_capacity is not None %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Onboarding Capacity</div>
-                <div>Yes</div>
+                <div>{% if submission.q14_onboarding_capacity %}Yes{% else %}No{% endif %}</div>
             </div>
+            {% endif %}
             
+            {% if submission.q15_market_competition %}
             <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                 <div style="font-weight: 600; margin-bottom: 5px;">Market Competition</div>
-                <div>High</div>
+                <div>{{ submission.get_q15_market_competition_display|title }}</div>
             </div>
+            {% endif %}
         </div>
         {% endif %}
     </div>

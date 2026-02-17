@@ -1,0 +1,101 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Audit Logs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Audit Logs</h1>
+            <p>System-level activity trail for admins</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <form method="get" style="margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="event_type">Event Type</label>
+            <input
+                type="text"
+                id="event_type"
+                name="event_type"
+                value="{{ event_type_filter }}"
+                placeholder="e.g. login_success"
+            >
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="{{ username_filter }}"
+                placeholder="Filter by username"
+            >
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{% url 'audit_logs' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+
+    {% if logs %}
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="white-space: nowrap;">Timestamp</th>
+                    <th>User</th>
+                    <th>Event</th>
+                    <th>Entity</th>
+                    <th>IP</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td style="white-space: nowrap;">
+                        <a href="{% url 'audit_log_detail' log.id %}" style="color: #1d4ed8; text-decoration: none;">
+                            {{ log.created_at|date:"Y-m-d H:i:s" }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if log.user %}
+                            {{ log.user.username }} ({{ log.user.get_role_display }})
+                        {% else %}
+                            <span style="color: #6b7280;">Anonymous</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.event_type }}</td>
+                    <td>
+                        {% if log.entity_type %}
+                            {{ log.entity_type }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>{{ log.ip_address|default:"—" }}</td>
+                    <td style="max-width: 360px; font-size: 13px; color: #4b5563;">
+                        {% if log.metadata %}
+                            <code style="white-space: pre-wrap; word-break: break-word;">
+                                {{ log.metadata|safe }}
+                            </code>
+                        {% else %}
+                            <span style="color: #9ca3af;">No extra details</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 40px 0; text-align: center; color: #6b7280;">
+        No audit events recorded yet.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

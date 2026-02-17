@@ -6,8 +6,9 @@ urlpatterns = [
     path('', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     
-    # Dashboard
+    # Dashboard & analytics
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('analytics/', views.analytics_view, name='analytics'),
     
     # Job Roles
     path('job-roles/create/', views.create_job_role_view, name='create_job_role'),
@@ -24,4 +25,8 @@ urlpatterns = [
     
     # Results
     path('results/<int:job_id>/', views.results_view, name='results'),
+
+    # Audit logs (admin-only)
+    path('audit-logs/', views.audit_logs_view, name='audit_logs'),
+    path('audit-logs/<int:log_id>/', views.audit_log_detail_view, name='audit_log_detail'),
 ]
