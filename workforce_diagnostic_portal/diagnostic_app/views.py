@@ -442,6 +442,204 @@ def submission_detail_view(request, submission_id):
     return render(request, 'diagnostic_app/submission_detail.html', context)
 
 
+@login_required
+def edit_submission_view(request, submission_id):
+    submission = get_object_or_404(DiagnosticSubmission, id=submission_id)
+    
+    # Check permission - only submission owner can edit
+    if submission.user != request.user:
+        messages.error(request, 'You can only edit your own submissions.')
+        return redirect('submission_detail', submission_id=submission_id)
+    
+    # Check if submission is recent (within 24 hours)
+    from django.utils import timezone
+    time_diff = timezone.now() - submission.submitted_at
+    if time_diff.total_seconds() > 24 * 60 * 60:  # 24 hours
+        messages.error(request, 'You can only edit submissions within 24 hours of submission.')
+        return redirect('submission_detail', submission_id=submission_id)
+    
+    if request.method == 'POST':
+        try:
+            # Parse boolean values
+            def parse_bool(value):
+                return value == 'true' if value in ['true', 'false'] else None
+            
+            # Parse integer values
+            def parse_int(value):
+                try:
+                    return int(value) if value else None
+                except (ValueError, TypeError):
+                    return None
+            
+            # Update basic submission data
+            submission.decision = request.POST.get('decision')
+            submission.decline_reason = request.POST.get('decline_reason', '')
+            submission.decline_category = request.POST.get('decline_category', '')
+            
+            # Update role-specific questions based on user role
+            user_role = request.user.role
+            user_level = request.user.get_level()
+            
+            if user_role == 'founder':
+                # Founder-specific questions
+                submission.q_founder_vision_alignment = parse_int(request.POST.get('q_founder_vision_alignment'))
+                submission.q_founder_strategic_fit = parse_int(request.POST.get('q_founder_strategic_fit'))
+                submission.q_founder_market_positioning = parse_int(request.POST.get('q_founder_market_positioning'))
+                submission.q_founder_resource_priority = request.POST.get('q_founder_resource_priority')
+                submission.q_founder_equity_consideration = request.POST.get('q_founder_equity_consideration')
+            
+            elif user_role == 'co_founder':
+                # Co-Founder-specific questions
+                submission.q_cofounder_partnership_dynamics = parse_int(request.POST.get('q_cofounder_partnership_dynamics'))
+                submission.q_cofounder_complementary_skills = parse_int(request.POST.get('q_cofounder_complementary_skills'))
+                submission.q_cofounder_team_chemistry = parse_int(request.POST.get('q_cofounder_team_chemistry'))
+                submission.q_cofounder_decision_making = request.POST.get('q_cofounder_decision_making')
+                submission.q_cofounder_culture_fit = parse_int(request.POST.get('q_cofounder_culture_fit'))
+            
+            elif user_role == 'cfo':
+                # CFO-specific questions
+                submission.q0_roi_analysis = parse_int(request.POST.get('q0_roi_analysis'))
+                submission.q0_cash_flow_impact = parse_int(request.POST.get('q0_cash_flow_impact'))
+                submission.q0_budget_alignment = parse_bool(request.POST.get('q0_budget_alignment'))
+                submission.q0_funding_source = request.POST.get('q0_funding_source')
+            
+            elif user_level == 1:
+                # CEO or other Level 1 questions
+                submission.q1_business_alignment = parse_int(request.POST.get('q1_business_alignment'))
+                submission.q2_financial_risk = parse_int(request.POST.get('q2_financial_risk'))
+                submission.q3_long_term_impact = parse_int(request.POST.get('q3_long_term_impact'))
+                submission.q4_budget_approval = parse_bool(request.POST.get('q4_budget_approval'))
+                submission.q5_strategic_priority = request.POST.get('q5_strategic_priority')
+            
+            elif user_level == 2:
+                # Level 2 questions - handle new role-specific fields
+                if user_role == 'ceo':
+                    submission.q_ceo_leadership_impact = parse_int(request.POST.get('q_ceo_leadership_impact'))
+                    submission.q_ceo_strategic_priority = request.POST.get('q_ceo_strategic_priority')
+                    submission.q_ceo_cross_functional_impact = parse_int(request.POST.get('q_ceo_cross_functional_impact'))
+                    submission.q_ceo_board_alignment = request.POST.get('q_ceo_board_alignment')
+                    submission.q_ceo_success_metrics = parse_bool(request.POST.get('q_ceo_success_metrics'))
+                elif user_role == 'cfo':
+                    submission.q_cfo_roi_confidence = parse_int(request.POST.get('q_cfo_roi_confidence'))
+                    submission.q_cfo_budget_flexibility = request.POST.get('q_cfo_budget_flexibility')
+                    submission.q_cfo_financial_risk = parse_int(request.POST.get('q_cfo_financial_risk'))
+                    submission.q_cfo_cash_flow_impact = request.POST.get('q_cfo_cash_flow_impact')
+                    submission.q_cfo_compliance = parse_bool(request.POST.get('q_cfo_compliance'))
+                elif user_role == 'cto':
+                    submission.q_cto_technical_feasibility = parse_int(request.POST.get('q_cto_technical_feasibility'))
+                    submission.q_cto_stack_alignment = request.POST.get('q_cto_stack_alignment')
+                    submission.q_cto_innovation_impact = parse_int(request.POST.get('q_cto_innovation_impact'))
+                    submission.q_cto_tech_debt = request.POST.get('q_cto_tech_debt')
+                    submission.q_cto_scalability = parse_bool(request.POST.get('q_cto_scalability'))
+                elif user_role == 'coo':
+                    submission.q_coo_operational_efficiency = parse_int(request.POST.get('q_coo_operational_efficiency'))
+                    submission.q_coo_process_integration = request.POST.get('q_coo_process_integration')
+                    submission.q_coo_resource_optimization = parse_int(request.POST.get('q_coo_resource_optimization'))
+                    submission.q_coo_workflow_disruption = request.POST.get('q_coo_workflow_disruption')
+                    submission.q_coo_standardization = parse_bool(request.POST.get('q_coo_standardization'))
+                elif user_role == 'project_head':
+                    submission.q_ph_deliverability = parse_int(request.POST.get('q_ph_deliverability'))
+                    submission.q_ph_team_capacity = request.POST.get('q_ph_team_capacity')
+                    submission.q_ph_timeline_realism = parse_int(request.POST.get('q_ph_timeline_realism'))
+                    submission.q_ph_dependency_management = request.POST.get('q_ph_dependency_management')
+                    submission.q_ph_resource_clarity = parse_bool(request.POST.get('q_ph_resource_clarity'))
+            
+            else:  # Level 3
+                # Level 3 questions - handle new role-specific fields
+                if user_role == 'hr_manager':
+                    submission.q_hr_culture_impact = parse_int(request.POST.get('q_hr_culture_impact'))
+                    submission.q_hr_development_potential = request.POST.get('q_hr_development_potential')
+                    submission.q_hr_retention_risk = parse_int(request.POST.get('q_hr_retention_risk'))
+                    submission.q_hr_training_infrastructure = parse_bool(request.POST.get('q_hr_training_infrastructure'))
+                    submission.q_hr_performance_integration = request.POST.get('q_hr_performance_integration')
+                elif user_role == 'recruiter':
+                    submission.q_rec_talent_availability = parse_int(request.POST.get('q_rec_talent_availability'))
+                    submission.q_rec_sourcing_strategy = request.POST.get('q_rec_sourcing_strategy')
+                    submission.q_rec_time_to_hire = parse_int(request.POST.get('q_rec_time_to_hire'))
+                    submission.q_rec_compensation_competitive = request.POST.get('q_rec_compensation_competitive')
+                    submission.q_rec_pipeline_ready = parse_bool(request.POST.get('q_rec_pipeline_ready'))
+                elif user_role == 'hr_executive':
+                    submission.q_hre_onboarding_readiness = parse_int(request.POST.get('q_hre_onboarding_readiness'))
+                    submission.q_hre_compliance_status = request.POST.get('q_hre_compliance_status')
+                    submission.q_hre_documentation = parse_int(request.POST.get('q_hre_documentation'))
+                    submission.q_hre_systems_capacity = request.POST.get('q_hre_systems_capacity')
+                    submission.q_hre_reporting_framework = parse_bool(request.POST.get('q_hre_reporting_framework'))
+            
+            # Update submission time and save
+            submission.submitted_at = timezone.now()
+            submission.save()
+            
+            # Create audit log
+            AuditLog.objects.create(
+                event_type='submission_updated',
+                user=request.user,
+                entity_type='diagnostic_submission',
+                entity_id=submission.id,
+                metadata={'original_submission_id': submission.id}
+            )
+            
+            messages.success(request, 'Assessment updated successfully!')
+            return redirect('submission_detail', submission_id=submission.id)
+            
+        except Exception as e:
+            messages.error(request, f'Error updating assessment: {str(e)}')
+            print(f"Error details: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    context = {
+        'job': submission.job_role,
+        'submission': submission,
+        'is_edit': True
+    }
+    return render(request, 'diagnostic_app/questionnaire.html', context)
+
+
+@login_required
+def delete_submission_view(request, submission_id):
+    submission = get_object_or_404(DiagnosticSubmission, id=submission_id)
+    
+    # Check permission - only submission owner can delete
+    if submission.user != request.user:
+        messages.error(request, 'You can only delete your own submissions.')
+        return redirect('submission_detail', submission_id=submission_id)
+    
+    # Check if submission is recent (within 24 hours)
+    from django.utils import timezone
+    time_diff = timezone.now() - submission.submitted_at
+    if time_diff.total_seconds() > 24 * 60 * 60:  # 24 hours
+        messages.error(request, 'You can only delete submissions within 24 hours of submission.')
+        return redirect('submission_detail', submission_id=submission_id)
+    
+    if request.method == 'POST':
+        job_role = submission.job_role
+        submission_id = submission.id
+        
+        # Create audit log before deletion
+        AuditLog.objects.create(
+            event_type='submission_deleted',
+            user=request.user,
+            entity_type='diagnostic_submission',
+            entity_id=submission_id,
+            metadata={
+                'job_role_title': job_role.title,
+                'decision': submission.decision
+            }
+        )
+        
+        submission.delete()
+        
+        messages.success(request, 'Assessment deleted successfully!')
+        return redirect('job_role_detail', job_id=job_role.id)
+    
+    # For GET request, show confirmation page
+    context = {
+        'submission': submission,
+        'job': submission.job_role
+    }
+    return render(request, 'diagnostic_app/delete_submission_confirm.html', context)
+
+
 # Notification Views
 @login_required
 def notifications_view(request):
@@ -472,11 +670,6 @@ def results_view(request, job_id):
 
     job = get_object_or_404(JobRole, id=job_id)
 
-    # Check if user is Level 1
-    if request.user.get_level() != 1:
-        messages.error(request, 'Only Level 1 users can view results.')
-        return redirect('dashboard')
-
     submissions = DiagnosticSubmission.objects.filter(job_role=job)
 
     # Group submissions by level
@@ -501,7 +694,8 @@ def results_view(request, job_id):
         'level2_subs': level2_subs,
         'level3_subs': level3_subs,
         'progress': progress,
-        'recommendation': recommendation,
+        'final_recommendation': recommendation,
+        'recommendation': recommendation,  # Keep for backward compatibility
     }
 
     return render(request, 'diagnostic_app/results.html', context)
@@ -555,3 +749,37 @@ def audit_log_detail_view(request, log_id):
     }
 
     return render(request, 'diagnostic_app/audit_log_detail.html', context)
+
+
+@login_required
+def delete_job_role_view(request, job_id):
+    """Delete job role - only Founder can delete"""
+    # Only Founder can delete job roles
+    if request.user.role != 'founder':
+        messages.error(request, 'Only the Founder can delete job roles.')
+        return redirect('job_roles')
+    
+    try:
+        job = JobRole.objects.get(id=job_id)
+    except JobRole.DoesNotExist:
+        messages.error(request, 'Job role not found.')
+        return redirect('job_roles')
+    
+    if request.method == 'POST':
+        job_title = job.title
+        job.delete()
+        
+        # Log the deletion
+        AuditLog.objects.create(
+            user=request.user,
+            event_type='JOB_ROLE_DELETED',
+            description=f'Deleted job role: {job_title}'
+        )
+        
+        messages.success(request, f'Job role "{job_title}" has been deleted successfully.')
+        return redirect('job_roles')
+    
+    context = {
+        'job': job,
+    }
+    return render(request, 'diagnostic_app/delete_job_role_confirm.html', context)

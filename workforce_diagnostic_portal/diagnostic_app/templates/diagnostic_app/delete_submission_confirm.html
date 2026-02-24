@@ -1,0 +1,46 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Delete Assessment{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Delete Assessment</h1>
+            <p>Confirm deletion of your assessment submission</p>
+        </div>
+        <div>
+            <a href="{% url 'submission_detail' submission.id %}" class="btn btn-secondary">← Back to Submission</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="background: #fef2f2; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <h3 style="color: #991b1b; margin-bottom: 15px;">⚠️ Warning: This action cannot be undone</h3>
+        <p style="margin-bottom: 10px;">You are about to delete your assessment for:</p>
+        <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <div style="font-weight: 600; margin-bottom: 5px;">{{ job.title }}</div>
+            <div style="color: #6b7280;">Submitted: {{ submission.submitted_at|date:"M d, Y H:i" }}</div>
+            <div style="color: #6b7280;">Decision: 
+                {% if submission.decision == 'approve' %}
+                <span style="color: #10b981;">✅ Approved</span>
+                {% else %}
+                <span style="color: #ef4444;">❌ Declined</span>
+                {% endif %}
+            </div>
+        </div>
+        <p style="font-weight: 600; color: #991b1b;">This will permanently remove all assessment data and cannot be recovered.</p>
+    </div>
+
+    <form method="post" style="display: flex; gap: 15px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" style="background: #dc2626;">
+            🗑️ Yes, Delete Assessment
+        </button>
+        <a href="{% url 'submission_detail' submission.id %}" class="btn btn-secondary">
+            Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

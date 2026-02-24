@@ -14,10 +14,13 @@ urlpatterns = [
     path('job-roles/create/', views.create_job_role_view, name='create_job_role'),
     path('job-roles/', views.job_roles_view, name='job_roles'),
     path('job-roles/<int:job_id>/', views.job_role_detail_view, name='job_role_detail'),
+    path('job-roles/<int:job_id>/delete/', views.delete_job_role_view, name='delete_job_role'),
     
     # Diagnostic
     path('diagnostic/<int:job_id>/', views.diagnostic_view, name='diagnostic'),
     path('submission/<int:submission_id>/', views.submission_detail_view, name='submission_detail'),
+    path('submission/<int:submission_id>/edit/', views.edit_submission_view, name='edit_submission'),
+    path('submission/<int:submission_id>/delete/', views.delete_submission_view, name='delete_submission'),
     
     # Notifications
     path('notifications/', views.notifications_view, name='notifications'),

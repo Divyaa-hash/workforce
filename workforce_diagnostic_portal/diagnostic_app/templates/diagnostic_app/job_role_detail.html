@@ -9,7 +9,11 @@
             <h1>Job Role Details</h1>
             <p>View complete details and assessment status</p>
         </div>
-        <div>
+        <div style="display: flex; gap: 10px;">
+            {% if user.role == 'founder' %}
+            <a href="{% url 'delete_job_role' job.id %}" class="btn btn-danger" 
+               style="background: #dc2626; color: white;">🗑️ Delete Job Role</a>
+            {% endif %}
             <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to List</a>
         </div>
     </div>

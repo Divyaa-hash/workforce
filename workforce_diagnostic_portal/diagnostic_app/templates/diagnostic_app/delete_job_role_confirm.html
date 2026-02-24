@@ -1,0 +1,56 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Delete Job Role{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Delete Job Role</h1>
+            <p>Confirm deletion of job role</p>
+        </div>
+        <div>
+            <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to Job Roles</a>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="background: #fef2f2; border-color: #fecaca;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+        <div style="font-size: 48px;">⚠️</div>
+        <div>
+            <h2 style="margin-bottom: 5px; color: #991b1b;">Delete Job Role</h2>
+            <p style="color: #991b1b;">This action cannot be undone.</p>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h3 style="margin-bottom: 15px;">Job Role Details</h3>
+        <div style="display: grid; gap: 10px;">
+            <div><strong>Title:</strong> {{ job.title }}</div>
+            <div><strong>Department:</strong> {{ job.department }}</div>
+            <div><strong>Urgency:</strong> {{ job.urgency|upper }}</div>
+            <div><strong>Budget Range:</strong> {{ job.budget_range }}</div>
+            <div><strong>Status:</strong> {{ job.status|title }}</div>
+            <div><strong>Created:</strong> {{ job.created_at|date:"M d, Y" }}</div>
+        </div>
+    </div>
+    
+    <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h4 style="margin-bottom: 10px; color: #92400e;">⚠️ Warning</h4>
+        <ul style="margin: 0; padding-left: 20px; color: #92400e;">
+            <li>All assessment submissions for this job role will be permanently deleted</li>
+            <li>All associated data and history will be lost</li>
+            <li>This action cannot be undone</li>
+        </ul>
+    </div>
+    
+    <form method="post" style="display: flex; gap: 15px; justify-content: flex-end;">
+        {% csrf_token %}
+        <a href="{% url 'job_role_detail' job.id %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger" style="background: #dc2626; color: white;">
+            🗑️ Delete Job Role
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -9,6 +9,9 @@
             <h1>Diagnostic Assessment</h1>
             <p>Job Role: <strong>{{ job.title }}</strong></p>
             <p>Your Role: <strong>{{ user.get_role_display }}</strong></p>
+            {% if is_edit %}
+            <p style="color: #059669; font-weight: 600;">✏️ Editing Assessment</p>
+            {% endif %}
         </div>
         <div>
             <a href="{% url 'job_roles' %}" class="btn btn-secondary">← Back to Job Roles</a>
@@ -32,7 +35,8 @@
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     {% for i in "12345" %}
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q_founder_vision_alignment" value="{{ forloop.counter }}" required>
+                        <input type="radio" name="q_founder_vision_alignment" value="{{ forloop.counter }}" required
+                               {% if is_edit and submission.q_founder_vision_alignment == forloop.counter %}checked{% endif %}>
                         {{ forloop.counter }}
                     </label>
                     {% endfor %}
@@ -303,31 +307,19 @@
         </div>
         
         {% elif user.get_level == 2 %}
-        <!-- Level 2 Questions -->
+        <!-- Level 2 Role-specific Questions -->
         <div style="margin-bottom: 40px;">
-            <h3 style="margin-bottom: 20px; color: #92400e;">Level 2 - Execution Questions</h3>
+            {% if user.role == 'ceo' %}
+            <!-- CEO Questions -->
+            <h3 style="margin-bottom: 20px; color: #92400e;">CEO - Leadership & Strategy Questions</h3>
             
             <div class="form-group">
-                <label>1. Skill Availability in Market</label>
-                <div style="display: flex; gap: 20px; margin-top: 10px;">
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q6_skill_availability" value="low" required> Low
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q6_skill_availability" value="medium" required> Medium
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q6_skill_availability" value="high" required> High
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>2. Execution Feasibility (1-5, where 5 is highly feasible)</label>
+                <label>1. Leadership Impact (1-5, where 5 is high impact)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How will this role drive organizational success?</p>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     {% for i in "12345" %}
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q7_execution_feasibility" value="{{ forloop.counter }}" required>
+                        <input type="radio" name="q_ceo_leadership_impact" value="{{ forloop.counter }}" required>
                         {{ forloop.counter }}
                     </label>
                     {% endfor %}
@@ -335,11 +327,27 @@
             </div>
             
             <div class="form-group">
-                <label>3. Team Dependency Level (1-5, where 5 is high dependency)</label>
+                <label>2. Strategic Priority Level</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ceo_strategic_priority" value="critical" required> Critical
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ceo_strategic_priority" value="high" required> High
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ceo_strategic_priority" value="medium" required> Medium
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Cross-functional Impact (1-5, where 5 is high impact)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How will this role affect multiple departments?</p>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     {% for i in "12345" %}
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q8_team_dependency" value="{{ forloop.counter }}" required>
+                        <input type="radio" name="q_ceo_cross_functional_impact" value="{{ forloop.counter }}" required>
                         {{ forloop.counter }}
                     </label>
                     {% endfor %}
@@ -347,71 +355,336 @@
             </div>
             
             <div class="form-group">
-                <label>4. Timeline Risk</label>
+                <label>4. Board/Investor Alignment</label>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q9_timeline_risk" value="low" required> Low
+                        <input type="radio" name="q_ceo_board_alignment" value="aligned" required> Aligned
                     </label>
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q9_timeline_risk" value="medium" required> Medium
+                        <input type="radio" name="q_ceo_board_alignment" value="neutral" required> Neutral
                     </label>
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q9_timeline_risk" value="high" required> High
+                        <input type="radio" name="q_ceo_board_alignment" value="concern" required> Concern
                     </label>
                 </div>
             </div>
             
             <div class="form-group">
-                <label>5. Mentor/Trainer Available?</label>
+                <label>5. Success Metrics Available?</label>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q10_mentor_available" value="true" required> Yes
+                        <input type="radio" name="q_ceo_success_metrics" value="true" required> Yes
                     </label>
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q10_mentor_available" value="false" required> No
+                        <input type="radio" name="q_ceo_success_metrics" value="false" required> No
                     </label>
                 </div>
             </div>
+            
+            {% elif user.role == 'cfo' %}
+            <!-- CFO Questions -->
+            <h3 style="margin-bottom: 20px; color: #92400e;">CFO - Financial & Risk Questions</h3>
+            
+            <div class="form-group">
+                <label>1. ROI Confidence (1-5, where 5 is very confident)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How confident are you in the financial returns?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_roi_confidence" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Budget Flexibility</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_budget_flexibility" value="flexible" required> Flexible
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_budget_flexibility" value="limited" required> Limited
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_budget_flexibility" value="fixed" required> Fixed
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Financial Risk Assessment (1-5, where 5 is low risk)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How financially sound is this investment?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_financial_risk" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Cash Flow Impact</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_cash_flow_impact" value="positive" required> Positive
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_cash_flow_impact" value="neutral" required> Neutral
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_cash_flow_impact" value="negative" required> Negative
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Compliance Requirements Met?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_compliance" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cfo_compliance" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            {% elif user.role == 'cto' %}
+            <!-- CTO Questions -->
+            <h3 style="margin-bottom: 20px; color: #92400e;">CTO - Technology & Innovation Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Technical Feasibility (1-5, where 5 is highly feasible)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How technically achievable is this role's objectives?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_technical_feasibility" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Technology Stack Alignment</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_stack_alignment" value="aligned" required> Aligned
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_stack_alignment" value="partial" required> Partial
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_stack_alignment" value="misaligned" required> Misaligned
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Innovation Impact (1-5, where 5 is high innovation)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How much will this role drive technological innovation?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_innovation_impact" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Technical Debt Considerations</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_tech_debt" value="low" required> Low Impact
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_tech_debt" value="medium" required> Medium Impact
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_tech_debt" value="high" required> High Impact
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Scalability Requirements Met?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_scalability" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_cto_scalability" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            {% elif user.role == 'coo' %}
+            <!-- COO Questions -->
+            <h3 style="margin-bottom: 20px; color: #92400e;">COO - Operations & Efficiency Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Operational Efficiency (1-5, where 5 is highly efficient)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How will this role improve operational efficiency?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_operational_efficiency" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Process Integration Level</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_process_integration" value="seamless" required> Seamless
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_process_integration" value="moderate" required> Moderate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_process_integration" value="complex" required> Complex
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Resource Optimization (1-5, where 5 is high optimization)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How well will this role optimize existing resources?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_resource_optimization" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Workflow Disruption Risk</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_workflow_disruption" value="low" required> Low
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_workflow_disruption" value="medium" required> Medium
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_workflow_disruption" value="high" required> High
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Standardization Opportunities?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_standardization" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_coo_standardization" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            {% elif user.role == 'project_head' %}
+            <!-- Project Head Questions -->
+            <h3 style="margin-bottom: 20px; color: #92400e;">Project Head - Project Management Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Project Deliverability (1-5, where 5 is highly deliverable)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How confident are you in delivering this project successfully?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_deliverability" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Team Capacity</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_team_capacity" value="available" required> Available
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_team_capacity" value="stretched" required> Stretched
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_team_capacity" value="overloaded" required> Overloaded
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Timeline Realism (1-5, where 5 is very realistic)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How realistic are the proposed timelines?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_timeline_realism" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Dependency Management</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_dependency_management" value="simple" required> Simple
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_dependency_management" value="moderate" required> Moderate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_dependency_management" value="complex" required> Complex
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Resource Requirements Clear?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_resource_clarity" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_ph_resource_clarity" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            {% endif %}
         </div>
         
         {% else %}
-        <!-- Level 3 Questions -->
+        <!-- Level 3 Role-specific Questions -->
         <div style="margin-bottom: 40px;">
-            <h3 style="margin-bottom: 20px; color: #1e40af;">Level 3 - HR Questions</h3>
+            {% if user.role == 'hr_manager' %}
+            <!-- HR Manager Questions -->
+            <h3 style="margin-bottom: 20px; color: #1e40af;">HR Manager - People & Culture Questions</h3>
             
             <div class="form-group">
-                <label>1. Talent Availability</label>
-                <div style="display: flex; gap: 20px; margin-top: 10px;">
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q11_talent_availability" value="low" required> Low
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q11_talent_availability" value="medium" required> Medium
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q11_talent_availability" value="high" required> High
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>2. Cost Validated with Market?</label>
-                <div style="display: flex; gap: 20px; margin-top: 10px;">
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q12_cost_validation" value="true" required> Yes
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q12_cost_validation" value="false" required> No
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>3. Process Readiness (1-5, where 5 is fully ready)</label>
+                <label>1. Team Culture Impact (1-5, where 5 is positive impact)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How will this role affect team culture and morale?</p>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     {% for i in "12345" %}
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q13_process_readiness" value="{{ forloop.counter }}" required>
+                        <input type="radio" name="q_hr_culture_impact" value="{{ forloop.counter }}" required>
                         {{ forloop.counter }}
                     </label>
                     {% endfor %}
@@ -419,31 +692,204 @@
             </div>
             
             <div class="form-group">
-                <label>4. Onboarding Capacity Available?</label>
+                <label>2. Employee Development Potential</label>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q14_onboarding_capacity" value="true" required> Yes
+                        <input type="radio" name="q_hr_development_potential" value="high" required> High
                     </label>
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q14_onboarding_capacity" value="false" required> No
+                        <input type="radio" name="q_hr_development_potential" value="moderate" required> Moderate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hr_development_potential" value="low" required> Low
                     </label>
                 </div>
             </div>
             
             <div class="form-group">
-                <label>5. Market Competition Level</label>
+                <label>3. Retention Risk Assessment (1-5, where 5 is low risk)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">What's the risk of current team members leaving?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hr_retention_risk" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Training Infrastructure Available?</label>
                 <div style="display: flex; gap: 20px; margin-top: 10px;">
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q15_market_competition" value="low" required> Low
+                        <input type="radio" name="q_hr_training_infrastructure" value="true" required> Yes
                     </label>
                     <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q15_market_competition" value="medium" required> Medium
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 5px;">
-                        <input type="radio" name="q15_market_competition" value="high" required> High
+                        <input type="radio" name="q_hr_training_infrastructure" value="false" required> No
                     </label>
                 </div>
             </div>
+            
+            <div class="form-group">
+                <label>5. Performance Management Integration</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hr_performance_integration" value="seamless" required> Seamless
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hr_performance_integration" value="moderate" required> Moderate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hr_performance_integration" value="complex" required> Complex
+                    </label>
+                </div>
+            </div>
+            
+            {% elif user.role == 'recruiter' %}
+            <!-- Recruiter Questions -->
+            <h3 style="margin-bottom: 20px; color: #1e40af;">Recruiter - Talent Acquisition Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Market Talent Availability (1-5, where 5 is high availability)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How available is qualified talent in the market?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_talent_availability" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Sourcing Strategy Effectiveness</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_sourcing_strategy" value="strong" required> Strong
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_sourcing_strategy" value="moderate" required> Moderate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_sourcing_strategy" value="weak" required> Weak
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Time-to-Hire Estimate (1-5, where 5 is quick hiring)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How quickly can we fill this position?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_time_to_hire" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. Compensation Competitiveness</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_compensation_competitive" value="competitive" required> Competitive
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_compensation_competitive" value="average" required> Average
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_compensation_competitive" value="below" required> Below Market
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Candidate Pipeline Ready?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_pipeline_ready" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_rec_pipeline_ready" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            
+            {% elif user.role == 'hr_executive' %}
+            <!-- HR Executive Questions -->
+            <h3 style="margin-bottom: 20px; color: #1e40af;">HR Executive - Operations & Compliance Questions</h3>
+            
+            <div class="form-group">
+                <label>1. Onboarding Process Readiness (1-5, where 5 is fully ready)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How prepared are our onboarding processes?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_onboarding_readiness" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>2. Compliance Requirements Status</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_compliance_status" value="compliant" required> Compliant
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_compliance_status" value="partial" required> Partial
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_compliance_status" value="non_compliant" required> Non-Compliant
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>3. Documentation Completeness (1-5, where 5 is complete)</label>
+                <p style="font-size: 0.9em; color: #666; margin-top: 5px;">How complete is our role documentation?</p>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    {% for i in "12345" %}
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_documentation" value="{{ forloop.counter }}" required>
+                        {{ forloop.counter }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>4. HR Systems Capacity</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_systems_capacity" value="sufficient" required> Sufficient
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_systems_capacity" value="limited" required> Limited
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_systems_capacity" value="insufficient" required> Insufficient
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>5. Reporting Framework Available?</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_reporting_framework" value="true" required> Yes
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="radio" name="q_hre_reporting_framework" value="false" required> No
+                    </label>
+                </div>
+            </div>
+            {% endif %}
         </div>
         {% endif %}
         

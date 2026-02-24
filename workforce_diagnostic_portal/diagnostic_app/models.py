@@ -195,6 +195,121 @@ class DiagnosticSubmission(models.Model):
     ], null=True, blank=True)
     q10_mentor_available = models.BooleanField(null=True, blank=True)
     
+    # CEO-Specific Questions (Level 2)
+    q_ceo_leadership_impact = models.IntegerField(verbose_name='Leadership Impact', choices=[(i, str(i)) for i in range(1, 6)], 
+                                                help_text='How will this role drive organizational success? (1=Low, 5=High)', 
+                                                null=True, blank=True)
+    q_ceo_strategic_priority = models.CharField(verbose_name='Strategic Priority Level', max_length=10,
+                                           choices=[
+                                               ('critical', 'Critical'),
+                                               ('high', 'High'),
+                                               ('medium', 'Medium')
+                                           ], null=True, blank=True)
+    q_ceo_cross_functional_impact = models.IntegerField(verbose_name='Cross-functional Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                     help_text='How will this role affect multiple departments? (1=Low, 5=High)', 
+                                                     null=True, blank=True)
+    q_ceo_board_alignment = models.CharField(verbose_name='Board/Investor Alignment', max_length=10,
+                                        choices=[
+                                            ('aligned', 'Aligned'),
+                                            ('neutral', 'Neutral'),
+                                            ('concern', 'Concern')
+                                        ], null=True, blank=True)
+    q_ceo_success_metrics = models.BooleanField(verbose_name='Success Metrics Available', 
+                                           help_text='Are success metrics clearly defined?', 
+                                           null=True, blank=True)
+    
+    # CFO-Specific Questions (Level 2)
+    q_cfo_roi_confidence = models.IntegerField(verbose_name='ROI Confidence', choices=[(i, str(i)) for i in range(1, 6)], 
+                                           help_text='How confident are you in financial returns? (1=Low, 5=Very High)', 
+                                           null=True, blank=True)
+    q_cfo_budget_flexibility = models.CharField(verbose_name='Budget Flexibility', max_length=10,
+                                           choices=[
+                                               ('flexible', 'Flexible'),
+                                               ('limited', 'Limited'),
+                                               ('fixed', 'Fixed')
+                                           ], null=True, blank=True)
+    q_cfo_financial_risk = models.IntegerField(verbose_name='Financial Risk Assessment', choices=[(i, str(i)) for i in range(1, 6)],
+                                           help_text='How financially sound is this investment? (1=High Risk, 5=Low Risk)', 
+                                           null=True, blank=True)
+    q_cfo_cash_flow_impact = models.CharField(verbose_name='Cash Flow Impact', max_length=10,
+                                           choices=[
+                                               ('positive', 'Positive'),
+                                               ('neutral', 'Neutral'),
+                                               ('negative', 'Negative')
+                                           ], null=True, blank=True)
+    q_cfo_compliance = models.BooleanField(verbose_name='Compliance Requirements Met', 
+                                       help_text='Are compliance requirements satisfied?', 
+                                       null=True, blank=True)
+    
+    # CTO-Specific Questions (Level 2)
+    q_cto_technical_feasibility = models.IntegerField(verbose_name='Technical Feasibility', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How technically achievable are objectives? (1=Low, 5=High)', 
+                                                  null=True, blank=True)
+    q_cto_stack_alignment = models.CharField(verbose_name='Technology Stack Alignment', max_length=10,
+                                       choices=[
+                                           ('aligned', 'Aligned'),
+                                           ('partial', 'Partial'),
+                                           ('misaligned', 'Misaligned')
+                                       ], null=True, blank=True)
+    q_cto_innovation_impact = models.IntegerField(verbose_name='Innovation Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                             help_text='How much will this role drive innovation? (1=Low, 5=High)', 
+                                             null=True, blank=True)
+    q_cto_tech_debt = models.CharField(verbose_name='Technical Debt Considerations', max_length=10,
+                                    choices=[
+                                        ('low', 'Low Impact'),
+                                        ('medium', 'Medium Impact'),
+                                        ('high', 'High Impact')
+                                    ], null=True, blank=True)
+    q_cto_scalability = models.BooleanField(verbose_name='Scalability Requirements Met', 
+                                        help_text='Are scalability requirements satisfied?', 
+                                        null=True, blank=True)
+    
+    # COO-Specific Questions (Level 2)
+    q_coo_operational_efficiency = models.IntegerField(verbose_name='Operational Efficiency', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How will this role improve operational efficiency? (1=Low, 5=High)', 
+                                                  null=True, blank=True)
+    q_coo_process_integration = models.CharField(verbose_name='Process Integration Level', max_length=10,
+                                           choices=[
+                                               ('seamless', 'Seamless'),
+                                               ('moderate', 'Moderate'),
+                                               ('complex', 'Complex')
+                                           ], null=True, blank=True)
+    q_coo_resource_optimization = models.IntegerField(verbose_name='Resource Optimization', choices=[(i, str(i)) for i in range(1, 6)],
+                                               help_text='How well will this role optimize resources? (1=Low, 5=High)', 
+                                               null=True, blank=True)
+    q_coo_workflow_disruption = models.CharField(verbose_name='Workflow Disruption Risk', max_length=10,
+                                           choices=[
+                                               ('low', 'Low'),
+                                               ('medium', 'Medium'),
+                                               ('high', 'High')
+                                           ], null=True, blank=True)
+    q_coo_standardization = models.BooleanField(verbose_name='Standardization Opportunities', 
+                                           help_text='Are there standardization opportunities?', 
+                                           null=True, blank=True)
+    
+    # Project Head-Specific Questions (Level 2)
+    q_ph_deliverability = models.IntegerField(verbose_name='Project Deliverability', choices=[(i, str(i)) for i in range(1, 6)],
+                                         help_text='How confident are you in delivery? (1=Low, 5=High)', 
+                                         null=True, blank=True)
+    q_ph_team_capacity = models.CharField(verbose_name='Team Capacity', max_length=10,
+                                     choices=[
+                                         ('available', 'Available'),
+                                         ('stretched', 'Stretched'),
+                                         ('overloaded', 'Overloaded')
+                                     ], null=True, blank=True)
+    q_ph_timeline_realism = models.IntegerField(verbose_name='Timeline Realism', choices=[(i, str(i)) for i in range(1, 6)],
+                                         help_text='How realistic are timelines? (1=Unrealistic, 5=Very Realistic)', 
+                                         null=True, blank=True)
+    q_ph_dependency_management = models.CharField(verbose_name='Dependency Management', max_length=10,
+                                           choices=[
+                                               ('simple', 'Simple'),
+                                               ('moderate', 'Moderate'),
+                                               ('complex', 'Complex')
+                                           ], null=True, blank=True)
+    q_ph_resource_clarity = models.BooleanField(verbose_name='Resource Requirements Clear', 
+                                           help_text='Are resource requirements clearly defined?', 
+                                           null=True, blank=True)
+    
     # Level 3 Questions (HR Roles)
     q11_talent_availability = models.CharField(max_length=10, choices=[
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
@@ -205,6 +320,75 @@ class DiagnosticSubmission(models.Model):
     q15_market_competition = models.CharField(max_length=10, choices=[
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
     ], null=True, blank=True)
+    
+    # HR Manager-Specific Questions (Level 3)
+    q_hr_culture_impact = models.IntegerField(verbose_name='Team Culture Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                        help_text='How will this role affect team culture and morale? (1=Negative, 5=Positive)', 
+                                        null=True, blank=True)
+    q_hr_development_potential = models.CharField(verbose_name='Employee Development Potential', max_length=10,
+                                           choices=[
+                                               ('high', 'High'),
+                                               ('moderate', 'Moderate'),
+                                               ('low', 'Low')
+                                           ], null=True, blank=True)
+    q_hr_retention_risk = models.IntegerField(verbose_name='Retention Risk Assessment', choices=[(i, str(i)) for i in range(1, 6)],
+                                        help_text='What is the risk of current team members leaving? (1=High Risk, 5=Low Risk)', 
+                                        null=True, blank=True)
+    q_hr_training_infrastructure = models.BooleanField(verbose_name='Training Infrastructure Available', 
+                                           help_text='Is training infrastructure available?', 
+                                           null=True, blank=True)
+    q_hr_performance_integration = models.CharField(verbose_name='Performance Management Integration', max_length=10,
+                                             choices=[
+                                                 ('seamless', 'Seamless'),
+                                                 ('moderate', 'Moderate'),
+                                                 ('complex', 'Complex')
+                                             ], null=True, blank=True)
+    
+    # Recruiter-Specific Questions (Level 3)
+    q_rec_talent_availability = models.IntegerField(verbose_name='Market Talent Availability', choices=[(i, str(i)) for i in range(1, 6)],
+                                           help_text='How available is qualified talent in the market? (1=Scarce, 5=Abundant)', 
+                                           null=True, blank=True)
+    q_rec_sourcing_strategy = models.CharField(verbose_name='Sourcing Strategy Effectiveness', max_length=10,
+                                         choices=[
+                                             ('strong', 'Strong'),
+                                             ('moderate', 'Moderate'),
+                                             ('weak', 'Weak')
+                                         ], null=True, blank=True)
+    q_rec_time_to_hire = models.IntegerField(verbose_name='Time-to-Hire Estimate', choices=[(i, str(i)) for i in range(1, 6)],
+                                       help_text='How quickly can we fill this position? (1=Very Slow, 5=Very Fast)', 
+                                       null=True, blank=True)
+    q_rec_compensation_competitive = models.CharField(verbose_name='Compensation Competitiveness', max_length=15,
+                                               choices=[
+                                                   ('competitive', 'Competitive'),
+                                                   ('average', 'Average'),
+                                                   ('below', 'Below Market')
+                                               ], null=True, blank=True)
+    q_rec_pipeline_ready = models.BooleanField(verbose_name='Candidate Pipeline Ready', 
+                                         help_text='Is there a ready candidate pipeline?', 
+                                         null=True, blank=True)
+    
+    # HR Executive-Specific Questions (Level 3)
+    q_hre_onboarding_readiness = models.IntegerField(verbose_name='Onboarding Process Readiness', choices=[(i, str(i)) for i in range(1, 6)],
+                                              help_text='How prepared are our onboarding processes? (1=Not Ready, 5=Fully Ready)', 
+                                              null=True, blank=True)
+    q_hre_compliance_status = models.CharField(verbose_name='Compliance Requirements Status', max_length=15,
+                                          choices=[
+                                              ('compliant', 'Compliant'),
+                                              ('partial', 'Partial'),
+                                              ('non_compliant', 'Non-Compliant')
+                                          ], null=True, blank=True)
+    q_hre_documentation = models.IntegerField(verbose_name='Documentation Completeness', choices=[(i, str(i)) for i in range(1, 6)],
+                                        help_text='How complete is our role documentation? (1=Incomplete, 5=Complete)', 
+                                        null=True, blank=True)
+    q_hre_systems_capacity = models.CharField(verbose_name='HR Systems Capacity', max_length=12,
+                                         choices=[
+                                             ('sufficient', 'Sufficient'),
+                                             ('limited', 'Limited'),
+                                             ('insufficient', 'Insufficient')
+                                         ], null=True, blank=True)
+    q_hre_reporting_framework = models.BooleanField(verbose_name='Reporting Framework Available', 
+                                             help_text='Is there a reporting framework in place?', 
+                                             null=True, blank=True)
     
     # Decision and Risk
     decision = models.CharField(max_length=10, choices=DECISION_CHOICES)
