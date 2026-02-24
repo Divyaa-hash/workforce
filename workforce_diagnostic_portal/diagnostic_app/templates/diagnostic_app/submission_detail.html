@@ -185,40 +185,30 @@
         <div style="display: grid; gap: 15px;">
             {% if submission.user.role == 'ceo' %}
                 <!-- CEO Responses -->
-                {% if submission.q_ceo_leadership_impact %}
                 <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                     <div style="font-weight: 600; margin-bottom: 5px;">Leadership Impact</div>
-                    <div>Rating: {{ submission.q_ceo_leadership_impact }}/5</div>
+                    <div>Rating: {% if submission.q_ceo_leadership_impact %}{{ submission.q_ceo_leadership_impact }}/5{% else %}Not answered{% endif %}</div>
                 </div>
-                {% endif %}
                 
-                {% if submission.q_ceo_strategic_priority %}
                 <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                     <div style="font-weight: 600; margin-bottom: 5px;">Strategic Priority Level</div>
-                    <div>{{ submission.get_q_ceo_strategic_priority_display|title }}</div>
+                    <div>{% if submission.q_ceo_strategic_priority %}{{ submission.get_q_ceo_strategic_priority_display|title }}{% else %}Not answered{% endif %}</div>
                 </div>
-                {% endif %}
                 
-                {% if submission.q_ceo_cross_functional_impact %}
                 <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                     <div style="font-weight: 600; margin-bottom: 5px;">Cross-functional Impact</div>
-                    <div>Rating: {{ submission.q_ceo_cross_functional_impact }}/5</div>
+                    <div>Rating: {% if submission.q_ceo_cross_functional_impact %}{{ submission.q_ceo_cross_functional_impact }}/5{% else %}Not answered{% endif %}</div>
                 </div>
-                {% endif %}
                 
-                {% if submission.q_ceo_board_alignment %}
                 <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                     <div style="font-weight: 600; margin-bottom: 5px;">Board/Investor Alignment</div>
-                    <div>{{ submission.get_q_ceo_board_alignment_display|title }}</div>
+                    <div>{% if submission.q_ceo_board_alignment %}{{ submission.get_q_ceo_board_alignment_display|title }}{% else %}Not answered{% endif %}</div>
                 </div>
-                {% endif %}
                 
-                {% if submission.q_ceo_success_metrics is not None %}
                 <div style="padding: 15px; background: #f9fafb; border-radius: 8px;">
                     <div style="font-weight: 600; margin-bottom: 5px;">Success Metrics Available</div>
-                    <div>{% if submission.q_ceo_success_metrics %}Yes{% else %}No{% endif %}</div>
+                    <div>{% if submission.q_ceo_success_metrics is not None %}{% if submission.q_ceo_success_metrics %}Yes{% else %}No{% endif %}{% else %}Not answered{% endif %}</div>
                 </div>
-                {% endif %}
                 
             {% elif submission.user.role == 'cfo' %}
                 <!-- CFO Responses -->
