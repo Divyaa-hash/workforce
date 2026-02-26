@@ -217,8 +217,9 @@ class OverallDecisionEngine:
             decision='decline'
         ).values_list('decline_category', flat=True).distinct())
         
-        # Calculate confidence score
-        completion_rate = total_submissions / 9.0  # Total expected submissions
+        # Total expected submissions: 4 (Level 1) + 3 (Level 2) + 3 (Level 3) = 10
+        expected_submissions = 10.0
+        completion_rate = min(total_submissions / expected_submissions, 1.0)  # Cap at 100%
         consensus_strength = abs(approve_count - decline_count) / total_submissions if total_submissions > 0 else 0
         
         # Enhanced decision logic
@@ -280,7 +281,7 @@ class OverallDecisionEngine:
             key_findings.append(f"Primary concerns: {', '.join(set(decline_categories[:2]))}")
         
         # Completion status
-        key_findings.append(f"Assessment completion: {total_submissions}/9 ({int(completion_rate*100)}%)")
+        key_findings.append(f"Assessment completion: {total_submissions}/10 ({int(completion_rate*100)}%)")
         
         recommendation = {
             'decision': decision,

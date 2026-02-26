@@ -75,6 +75,20 @@ class JobRole(models.Model):
         
         completed_assignments = RoleAssignment.objects.filter(job_role=self, is_completed=True).count()
         return round((completed_assignments / total_assignments) * 100, 1)
+    
+    def delete(self, *args, **kwargs):
+        """Override delete to clean up deletion notifications"""
+        # Clean up deletion notifications for this job role
+        try:
+            Notification.objects.filter(
+                job_role=self,
+                notification_type='job_deleted'
+            ).delete()
+        except Exception as e:
+            print(f"Error cleaning up notifications: {e}")
+        
+        # Call the original delete method
+        super().delete(*args, **kwargs)
 
 
 class RoleAssignment(models.Model):
@@ -697,6 +711,7 @@ class AuditLog(models.Model):
         ('login_failure', 'Login Failure'),
         ('diagnostic_submitted', 'Diagnostic Submitted'),
         ('final_decision_generated', 'Final Decision Generated'),
+        ('job_role_deleted', 'Job Role Deleted'),
     ]
     
     ENTITY_TYPES = [
@@ -721,9 +736,17 @@ class AuditLog(models.Model):
 
 
 class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('job_created', 'Job Role Created'),
+        ('job_deleted', 'Job Role Deleted'),
+        ('assessment_completed', 'Assessment Completed'),
+        ('other', 'Other'),
+    ]
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     message = models.TextField()
     job_role = models.ForeignKey(JobRole, on_delete=models.SET_NULL, null=True, blank=True)
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default='other')
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -765,12 +788,12 @@ from django.dispatch import receiver
 def create_job_role_notifications(sender, instance, created, **kwargs):
     """Create notifications when a new job role is created"""
     if created:
-        # Get all users who should be notified
+        # Get all users who should be notified, except the creator
         users_to_notify = User.objects.filter(
             models.Q(role__in=['founder', 'co_founder']) |  # Level 1
             models.Q(role__in=['ceo', 'cfo', 'cto', 'coo', 'project_head']) |   # Level 2
             models.Q(role__in=['hr_manager', 'recruiter', 'hr_executive'])  # Level 3
-        ).distinct()
+        ).exclude(id=instance.created_by.id).distinct()  # Exclude the creator
         
         for user in users_to_notify:
             Notification.objects.create(

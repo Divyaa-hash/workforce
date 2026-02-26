@@ -5,7 +5,7 @@
 {% block content %}
 <div class="page-header">
     <h1>Create New Job Role</h1>
-    <p>Only Founders, Co-Founders, CEOs, and CFOs can create new job roles</p>
+    <p>Only Founders and Co-Founders can create new job roles</p>
 </div>
 
 <div class="card">
@@ -87,7 +87,7 @@
         </div>
         
         <div style="display: flex; gap: 15px;">
-            <button type="submit" class="btn btn-primary">Create Job Role</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Create Job Role</button>
             <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
@@ -113,6 +113,26 @@ document.addEventListener('DOMContentLoaded', function() {
         if (budget) {
             budgetSelect.value = budget;
         }
+    });
+    
+    // Handle form submission to prevent double submission
+    const form = document.querySelector('.job-role-form');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function(event) {
+        // Prevent double submission
+        if (submitBtn.disabled) {
+            event.preventDefault();
+            return false;
+        }
+        
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+        submitBtn.style.opacity = '0.6';
+        
+        // Allow form to submit normally
+        return true;
     });
 });
 </script>

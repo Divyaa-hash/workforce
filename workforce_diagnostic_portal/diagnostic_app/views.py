@@ -185,22 +185,57 @@ def create_job_role_view(request):
         return redirect('dashboard')
     
     if request.method == 'POST':
-        form = JobRoleForm(request.POST, user=request.user)
-        if form.is_valid():
-            # Save the job role
-            job_role = form.save(commit=False)
-            job_role.created_by = request.user
-            job_role.status = 'active'
-            job_role.save()
+        print(f"POST request received from user: {request.user.username} ({request.user.role})")
+        try:
+            form = JobRoleForm(request.POST, user=request.user)
+            print(f"Form is valid: {form.is_valid()}")
+            if not form.is_valid():
+                print(f"Form errors: {form.errors}")
             
-            # Auto-assign roles based on level
-            auto_assign_users(job_role)
-            
-            # Create notifications
-            notify_role_assignment(job_role)
-            
-            messages.success(request, f'Job role "{job_role.title}" created successfully!')
-            return redirect('job_roles')
+            if form.is_valid():
+                print("Form validation passed, proceeding with job creation...")
+                # Check for duplicate job title to prevent double submissions
+                title = form.cleaned_data['title']
+                department = form.cleaned_data['department']
+                
+                print(f"Creating job: {title} in {department}")
+                
+                # Check if a job with same title and department already exists in last 5 minutes
+                recent_duplicate = JobRole.objects.filter(
+                    title__iexact=title.strip(),
+                    department__iexact=department.strip(),
+                    created_at__gte=timezone.now() - timezone.timedelta(minutes=5)
+                ).exists()
+                
+                if recent_duplicate:
+                    print(f"Recent duplicate found for {title} in {department}")
+                    messages.warning(request, f'A job role "{title}" in {department} was recently created. Please check the job roles list.')
+                    return redirect('job_roles')
+                
+                # Save the job role
+                print("Saving job role...")
+                job_role = form.save(commit=False)
+                job_role.created_by = request.user
+                job_role.status = 'active'
+                job_role.save()
+                print(f"Job role saved with ID: {job_role.id}")
+                
+                # Auto-assign roles based on level
+                print("Auto-assigning users...")
+                auto_assign_users(job_role)
+                
+                # Create role assignment notifications
+                print("Creating role assignment notifications...")
+                notify_role_assignment(job_role)
+                
+                messages.success(request, f'Job role "{job_role.title}" created successfully!')
+                print("Job creation completed successfully")
+                return redirect('job_roles')
+        except Exception as e:
+            print(f"Error during job creation: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messages.error(request, f'Error creating job role: {str(e)}')
     else:
         form = JobRoleForm(user=request.user)
     
@@ -242,19 +277,24 @@ def notify_role_assignment(job_role):
         Notification.objects.create(
             user=user,
             message=message,
-            job_role=job_role
+            job_role=job_role,
+            notification_type='assessment_completed'
         )
 
 
 @login_required
 def job_roles_view(request):
-    if request.user.get_level() == 1:
-        # Level 1 sees all jobs
-        jobs = JobRole.objects.all().order_by('-created_at')
-    else:
-        # Other levels see only their assigned jobs
-        assigned_job_ids = RoleAssignment.objects.filter(user=request.user).values_list('job_role_id', flat=True)
-        jobs = JobRole.objects.filter(id__in=assigned_job_ids).order_by('-created_at')
+    # Temporary fix: Show all jobs to all users for debugging
+    jobs = JobRole.objects.all().order_by('-created_at')
+    
+    # TODO: Revert this back to level-based filtering after debugging
+    # if request.user.get_level() == 1:
+    #     # Level 1 sees all jobs
+    #     jobs = JobRole.objects.all().order_by('-created_at')
+    # else:
+    #     # Other levels see only their assigned jobs
+    #     assigned_job_ids = RoleAssignment.objects.filter(user=request.user).values_list('job_role_id', flat=True)
+    #     jobs = JobRole.objects.filter(id__in=assigned_job_ids).order_by('-created_at')
     
     # Get submission status for each job for the current user only
     for job in jobs:
@@ -764,22 +804,56 @@ def delete_job_role_view(request, job_id):
     except JobRole.DoesNotExist:
         messages.error(request, 'Job role not found.')
         return redirect('job_roles')
-    
-    if request.method == 'POST':
-        job_title = job.title
-        job.delete()
-        
-        # Log the deletion
-        AuditLog.objects.create(
-            user=request.user,
-            event_type='JOB_ROLE_DELETED',
-            description=f'Deleted job role: {job_title}'
-        )
-        
-        messages.success(request, f'Job role "{job_title}" has been deleted successfully.')
+    except Exception as e:
+        messages.error(request, f'Error retrieving job role: {str(e)}')
         return redirect('job_roles')
     
-    context = {
-        'job': job,
-    }
-    return render(request, 'diagnostic_app/delete_job_role_confirm.html', context)
+    if request.method == 'POST':
+        try:
+            job_title = job.title
+            
+            # Send deletion notifications to all users BEFORE deleting
+            all_users = User.objects.all()
+            deletion_notifications = []
+            for user in all_users:
+                if user != request.user:  # Don't notify the founder who deleted it
+                    deletion_notifications.append(
+                        Notification(
+                            user=user,
+                            message=f'Job role "{job_title}" has been deleted by {request.user.get_full_name() or request.user.username}',
+                            job_role=job,
+                            notification_type='job_deleted'
+                        )
+                    )
+            
+            # Create all notifications
+            Notification.objects.bulk_create(deletion_notifications)
+            
+            job.delete()
+            
+            # Log the deletion
+            AuditLog.objects.create(
+                user=request.user,
+                event_type='job_role_deleted',
+                entity_type='job_role',
+                entity_id=job.id,
+                metadata={
+                    'job_title': job_title,
+                    'action': 'deleted'
+                }
+            )
+            
+            messages.success(request, f'Job role "{job_title}" has been deleted successfully.')
+            return redirect('job_roles')
+        except Exception as e:
+            messages.error(request, f'Error deleting job role: {str(e)}')
+            return redirect('job_roles')
+    
+    try:
+        context = {
+            'job': job,
+        }
+        return render(request, 'diagnostic_app/delete_job_role_confirm.html', context)
+    except Exception as e:
+        messages.error(request, f'Error rendering delete confirmation: {str(e)}')
+        return redirect('job_roles')
