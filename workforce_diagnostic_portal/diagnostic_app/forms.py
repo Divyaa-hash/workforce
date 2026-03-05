@@ -31,11 +31,103 @@ class JobRoleForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'required_skills': forms.Textarea(attrs={'rows': 3}),
+            'budget_range': forms.TextInput(attrs={
+                'placeholder': 'e.g., 3–5 LPA, 10 LPA, 8-12 LPA',
+                'pattern': '[0-9\\-\\–\\s\\+LPA\\.]+',
+                'title': 'Enter salary range in LPA (e.g., 3-5 LPA, 10 LPA, 18+ LPA)'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        
+        # Update experience level choices
+        self.fields['experience_level'].choices = [
+            ('', 'Select level'),
+            ('Entry Level', 'Entry Level'),
+            ('Junior Level', 'Junior Level'),
+            ('Mid Level', 'Mid Level'),
+            ('Senior Level', 'Senior Level'),
+            ('Lead/Expert Level', 'Lead/Expert Level'),
+        ]
+    
+    def clean_budget_range(self):
+        budget = self.cleaned_data.get('budget_range', '').strip()
+        
+        if not budget:
+            raise forms.ValidationError('Budget range is required.')
+        
+        # Check if budget contains numbers
+        if not any(char.isdigit() for char in budget):
+            raise forms.ValidationError('Budget must contain at least one number.')
+        
+        # Validate format (allow numbers, spaces, hyphens, plus, dots, and LPA)
+        import re
+        cleaned_budget = re.sub(r'\s+', '', budget.upper())  # Remove spaces and convert to uppercase
+        
+        # Check if it ends with LPA (optional) and contains valid characters
+        if not re.match(r'^[\d\-\–\+\.]+LPA?$', cleaned_budget):
+            raise forms.ValidationError(
+                'Invalid format. Please use format like "3-5 LPA", "10 LPA", "8-12 LPA", or "18+ LPA".'
+            )
+        
+        # Extract numbers for validation
+        numbers = re.findall(r'[\d\.]+', budget)
+        if not numbers:
+            raise forms.ValidationError('Budget must contain valid numbers.')
+        
+        # Convert to float and validate ranges
+        salaries = [float(n) for n in numbers]
+        min_salary = min(salaries)
+        
+        # Validate minimum salary is reasonable (at least 1 LPA)
+        if min_salary < 1:
+            raise forms.ValidationError('Minimum salary should be at least 1 LPA.')
+        
+        # Validate maximum salary is reasonable (not more than 100 LPA)
+        max_salary = max(salaries)
+        if max_salary > 100:
+            raise forms.ValidationError('Salary seems too high. Please enter a reasonable amount.')
+        
+        return budget
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        budget = cleaned_data.get('budget_range', '')
+        experience_level = cleaned_data.get('experience_level', '')
+        
+        if budget and experience_level:
+            # Validate that experience level matches budget classification
+            suggested_level = self._classify_by_budget(budget)
+            if suggested_level and suggested_level != experience_level:
+                # Don't raise error, but add a warning message
+                pass  # Allow user to override, but could add a warning if needed
+        
+        return cleaned_data
+    
+    def _classify_by_budget(self, budget_text):
+        """Helper method to classify experience level based on budget"""
+        import re
+        numbers = re.findall(r'[\d\.]+', budget_text)
+        if not numbers:
+            return None
+        
+        salaries = [float(n) for n in numbers]
+        min_salary = min(salaries)
+        
+        if min_salary >= 2 and min_salary <= 3:
+            return 'Entry Level'
+        elif min_salary >= 4 and min_salary <= 6:
+            return 'Junior Level'
+        elif min_salary >= 7 and min_salary <= 10:
+            return 'Mid Level'
+        elif min_salary >= 11 and min_salary <= 18:
+            return 'Senior Level'
+        elif min_salary > 18:
+            return 'Lead/Expert Level'
+        
+        return None
 
 
 class DiagnosticForm(forms.ModelForm):

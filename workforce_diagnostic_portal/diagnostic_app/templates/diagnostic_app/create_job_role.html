@@ -39,27 +39,31 @@
                 <label for="experience_level">Experience Level *</label>
                 <select id="experience_level" name="experience_level" required>
                     <option value="">Select level</option>
-                    <option value="Entry Level">Entry Level (0-2 years)</option>
-                    <option value="Mid Level">Mid Level (3-5 years)</option>
-                    <option value="Senior Level">Senior Level (5+ years)</option>
-                    <option value="Lead/Manager">Lead/Manager</option>
-                    <option value="Director/VP">Director/VP</option>
-                    <option value="C-Level">C-Level</option>
+                    <option value="Entry Level">Entry Level</option>
+                    <option value="Junior Level">Junior Level</option>
+                    <option value="Mid Level">Mid Level</option>
+                    <option value="Senior Level">Senior Level</option>
+                    <option value="Lead/Expert Level">Lead/Expert Level</option>
                 </select>
             </div>
             
             <div class="form-group">
-                <label for="budget_range">Budget Range *</label>
-                <select id="budget_range" name="budget_range" required>
-                    <option value="">Select budget range</option>
-                    <option value="$50k - $70k">$50k - $70k (Entry Level)</option>
-                    <option value="$70k - $90k">$70k - $90k (Mid Level)</option>
-                    <option value="$90k - $120k">$90k - $120k (Senior Level)</option>
-                    <option value="$120k - $150k">$120k - $150k (Lead/Manager)</option>
-                    <option value="$150k - $200k">$150k - $200k (Director)</option>
-                    <option value="$200k+">$200k+ (C-Level)</option>
-                </select>
+                <label for="budget_range">Budget Range (LPA) *</label>
+                <input type="text" id="budget_range" name="budget_range" required 
+                       placeholder="e.g., 3–5 LPA, 10 LPA, 8-12 LPA"
+                       pattern="[0-9\-\–\s\+LPA\.]+"
+                       title="Enter salary range in LPA (e.g., 3-5 LPA, 10 LPA, 18+ LPA)">
+                <small style="color: #666; font-size: 0.85em; display: block; margin-top: 5px;">
+                    Enter salary in LPA (Lakhs Per Annum). Examples: 3–5 LPA, 10 LPA, 8-12 LPA, 18+ LPA
+                </small>
             </div>
+        </div>
+        
+        <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0ea5e9;">
+            <p style="margin: 0; font-size: 0.9em; color: #0c4a6e;">
+                <strong>💰 Salary Level Classification:</strong><br>
+                2–3 LPA → Entry Level | 4–6 LPA → Junior Level | 7–10 LPA → Mid Level | 11–18 LPA → Senior Level | 18+ LPA → Lead/Expert Level
+            </p>
         </div>
         
         <div class="form-group">
@@ -95,23 +99,86 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-update budget based on experience level
+    // Auto-update experience level based on budget (salary classification)
+    const budgetInput = document.getElementById('budget_range');
     const experienceSelect = document.getElementById('experience_level');
-    const budgetSelect = document.getElementById('budget_range');
     
+    function classifyExperienceLevel(budgetText) {
+        // Extract numbers from budget text
+        const numbers = budgetText.match(/[\d\.]+/g);
+        if (!numbers || numbers.length === 0) return null;
+        
+        // Convert to numbers and find the minimum (for ranges like "8-12 LPA")
+        const salaries = numbers.map(n => parseFloat(n));
+        const minSalary = Math.min(...salaries);
+        
+        // Classify based on minimum salary
+        if (minSalary >= 2 && minSalary <= 3) return 'Entry Level';
+        if (minSalary >= 4 && minSalary <= 6) return 'Junior Level';
+        if (minSalary >= 7 && minSalary <= 10) return 'Mid Level';
+        if (minSalary >= 11 && minSalary <= 18) return 'Senior Level';
+        if (minSalary > 18) return 'Lead/Expert Level';
+        
+        return null;
+    }
+    
+    function validateBudgetFormat(budgetText) {
+        // Check if budget contains valid format (numbers and optional LPA)
+        const validPattern = /^[\d\s\-\–\+\.]+LPA?$/i;
+        const hasNumbers = /[\d]/.test(budgetText);
+        
+        if (!hasNumbers) {
+            return 'Please enter at least one number';
+        }
+        
+        // Remove spaces and check if it's a valid format
+        const cleaned = budgetText.replace(/\s+/g, '');
+        if (!cleaned.match(/^[\d\-\–\+\.]+LPA?$/i)) {
+            return 'Please use valid format (e.g., "3-5 LPA", "10 LPA", "18+ LPA")';
+        }
+        
+        return null; // No error
+    }
+    
+    budgetInput.addEventListener('input', function() {
+        const budget = this.value.trim();
+        
+        if (budget.length === 0) {
+            experienceSelect.value = '';
+            return;
+        }
+        
+        // Validate format
+        const error = validateBudgetFormat(budget);
+        if (error) {
+            this.setCustomValidity(error);
+            return;
+        }
+        
+        this.setCustomValidity('');
+        
+        // Auto-classify experience level
+        const suggestedLevel = classifyExperienceLevel(budget);
+        if (suggestedLevel) {
+            experienceSelect.value = suggestedLevel;
+        }
+    });
+    
+    // Also update when experience level changes manually (optional reverse mapping)
     experienceSelect.addEventListener('change', function() {
-        const experience = this.value;
-        let budget = '';
+        const level = this.value;
+        let suggestedBudget = '';
         
-        if (experience === 'Entry Level') budget = '$50k - $70k';
-        else if (experience === 'Mid Level') budget = '$70k - $90k';
-        else if (experience === 'Senior Level') budget = '$90k - $120k';
-        else if (experience === 'Lead/Manager') budget = '$120k - $150k';
-        else if (experience === 'Director/VP') budget = '$150k - $200k';
-        else if (experience === 'C-Level') budget = '$200k+';
+        // Provide budget suggestions based on selected level
+        if (level === 'Entry Level') suggestedBudget = '2-3 LPA';
+        else if (level === 'Junior Level') suggestedBudget = '4-6 LPA';
+        else if (level === 'Mid Level') suggestedBudget = '7-10 LPA';
+        else if (level === 'Senior Level') suggestedBudget = '11-18 LPA';
+        else if (level === 'Lead/Expert Level') suggestedBudget = '18+ LPA';
         
-        if (budget) {
-            budgetSelect.value = budget;
+        // Only suggest if budget field is empty
+        if (suggestedBudget && budgetInput.value.trim() === '') {
+            budgetInput.placeholder = `e.g., ${suggestedBudget}`;
         }
     });
     
@@ -120,6 +187,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     
     form.addEventListener('submit', function(event) {
+        // Validate budget format before submission
+        const budget = budgetInput.value.trim();
+        if (budget) {
+            const error = validateBudgetFormat(budget);
+            if (error) {
+                alert('Please fix the budget format: ' + error);
+                budgetInput.focus();
+                event.preventDefault();
+                return false;
+            }
+        }
+        
         // Prevent double submission
         if (submitBtn.disabled) {
             event.preventDefault();
