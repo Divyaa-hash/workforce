@@ -8,6 +8,25 @@ from django.utils import timezone
 from .forms import CustomUserCreationForm, LoginForm, JobRoleForm, DiagnosticForm
 from .models import User, JobRole, DiagnosticSubmission, RoleAssignment, Notification, AuditLog
 
+# Homepage View
+def home_view(request):
+    """Homepage view - displayed before login"""
+    # If show_home parameter is explicitly set to true, show homepage regardless of authentication
+    if request.GET.get('show_home') == 'true':
+        if request.user.is_authenticated:
+            return render(request, 'diagnostic_app/home_standalone.html')
+        else:
+            return render(request, 'diagnostic_app/home_public.html')
+    
+    # If user is authenticated and not explicitly requesting homepage, redirect to dashboard
+    if request.user.is_authenticated:
+        level = request.user.get_level()
+        dashboard_url = reverse('dashboard')
+        return redirect(f'{dashboard_url}?level={level}')
+    
+    # Show public homepage for non-authenticated users
+    return render(request, 'diagnostic_app/home_public.html')
+
 # Authentication Views
 def login_view(request):
     if request.user.is_authenticated:

@@ -33,6 +33,26 @@ class User(AbstractUser):
         """Check if user can create job roles"""
         return self.role in ['founder', 'co_founder']
     
+    def can_view_analytics(self):
+        """Check if user can view analytics"""
+        return self.get_level() <= 2  # Level 1 and 2
+    
+    def can_view_audit_logs(self):
+        """Check if user can view audit logs"""
+        return self.role in ['founder', 'co_founder'] or self.is_superuser
+    
+    def can_manage_users(self):
+        """Check if user can manage other users"""
+        return self.role in ['founder', 'co_founder'] or self.is_superuser
+    
+    def can_access_reports(self):
+        """Check if user can access reports"""
+        return self.get_level() <= 2  # Level 1 and 2
+    
+    def can_view_system_settings(self):
+        """Check if user can view system settings"""
+        return self.role in ['founder', 'co_founder'] or self.is_superuser
+    
     def __str__(self):
         return f"{self.username} ({self.get_role_display()})"
 
@@ -154,31 +174,44 @@ class DiagnosticSubmission(models.Model):
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
     ], null=True, blank=True)
     
-    # Founder-Specific Questions
-    q_founder_vision_alignment = models.IntegerField(verbose_name='Vision Alignment', choices=[(i, str(i)) for i in range(1, 6)], 
-                                                     help_text='How well does this role align with your company vision? (1=Poor, 5=Excellent)', 
-                                                     null=True, blank=True)
-    q_founder_equity_consideration = models.CharField(verbose_name='Equity Consideration', max_length=20,
-                                                      choices=[
-                                                          ('not_applicable', 'Not Applicable'),
-                                                          ('equity_required', 'Equity Required'),
-                                                          ('cash_only', 'Cash Only'),
-                                                          ('hybrid', 'Hybrid (Cash + Equity)')
-                                                      ], null=True, blank=True)
-    q_founder_market_positioning = models.IntegerField(verbose_name='Market Positioning Impact', choices=[(i, str(i)) for i in range(1, 6)],
-                                                       help_text='How does this role strengthen market positioning? (1=Weak, 5=Strong)', 
-                                                       null=True, blank=True)
-    q_founder_resource_priority = models.CharField(verbose_name='Resource Allocation Priority', max_length=10,
-                                                   choices=[
-                                                       ('low', 'Low'),
-                                                       ('medium', 'Medium'),
-                                                       ('high', 'High')
-                                                   ], null=True, blank=True)
-    q_founder_strategic_fit = models.IntegerField(verbose_name='Strategic Fit', choices=[(i, str(i)) for i in range(1, 6)],
-                                                 help_text='How well does this role fit strategic goals? (1=Poor Fit, 5=Perfect Fit)', 
+    # Founder-Specific Questions (10 Strong Strategic Questions)
+    q_founder_market_validation = models.IntegerField(verbose_name='Market Opportunity Validation', choices=[(i, str(i)) for i in range(1, 6)],
+                                                    help_text='How validated is the market opportunity this role addresses? (1=Unvalidated, 5=Highly Validated with Customer Traction)',
+                                                    null=True, blank=True)
+    q_founder_competitive_moat = models.IntegerField(verbose_name='Competitive Moat Creation', choices=[(i, str(i)) for i in range(1, 6)],
+                                                   help_text='How strongly will this role create or strengthen your competitive moat? (1=No Moat, 5=Significant Defensible Moat)',
+                                                   null=True, blank=True)
+    q_founder_unit_economics = models.IntegerField(verbose_name='Unit Economics Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How will this role impact your unit economics and profitability? (1=Negative Impact, 5=Significantly Improves Unit Economics)',
                                                  null=True, blank=True)
+    q_founder_talent_amplification = models.IntegerField(verbose_name='Talent Amplification Factor', choices=[(i, str(i)) for i in range(1, 6)],
+                                                       help_text='How much will this role amplify the effectiveness of your existing team? (1=No Amplification, 5=10x Team Effectiveness)',
+                                                       null=True, blank=True)
+    q_founder_capital_efficiency = models.CharField(verbose_name='Capital Efficiency', max_length=20,
+                                                  choices=[
+                                                      ('immediate', 'Immediate ROI (0-3 months)'),
+                                                      ('short_term', 'Short-term ROI (3-6 months)'),
+                                                      ('medium_term', 'Medium-term ROI (6-12 months)'),
+                                                      ('long_term', 'Long-term ROI (12+ months)'),
+                                                      ('strategic', 'Strategic Investment (No direct ROI expected)')
+                                                  ], null=True, blank=True)
+    q_founder_scalability_leverage = models.IntegerField(verbose_name='Scalability Leverage', choices=[(i, str(i)) for i in range(1, 6)],
+                                                       help_text='How well does this role scale with business growth? (1=Doesn\'t Scale, 5=Scales Exponentially)',
+                                                       null=True, blank=True)
+    q_founder_risk_mitigation = models.IntegerField(verbose_name='Risk Mitigation Value', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How much does this role mitigate key business risks? (1=No Risk Mitigation, 5=Eliminates Critical Risk)',
+                                                  null=True, blank=True)
+    q_founder_network_effects = models.BooleanField(verbose_name='Network Effect Creation',
+                                                  help_text='Will this role create or strengthen network effects for your business?',
+                                                  null=True, blank=True)
+    q_founder_strategic_options = models.IntegerField(verbose_name='Strategic Option Value', choices=[(i, str(i)) for i in range(1, 6)],
+                                                    help_text='How much strategic option value does this role create for future opportunities? (1=No Option Value, 5=Significant Strategic Options)',
+                                                    null=True, blank=True)
+    q_founder_time_leverage = models.IntegerField(verbose_name='Founder Time Leverage', choices=[(i, str(i)) for i in range(1, 6)],
+                                               help_text='How much will this role leverage your time as founder? (1=Consumes More Time, 5=Frees Up 80%+ of Your Time)',
+                                               null=True, blank=True)
     
-    # Co-Founder-Specific Questions
+    # Co-Founder-Specific Questions (Enhanced to 10 questions)
     q_cofounder_partnership_dynamics = models.IntegerField(verbose_name='Partnership Dynamics', choices=[(i, str(i)) for i in range(1, 6)],
                                                            help_text='How well does this role complement partnership dynamics? (1=Poor, 5=Excellent)', 
                                                            null=True, blank=True)
@@ -198,6 +231,27 @@ class DiagnosticSubmission(models.Model):
                                                  help_text='How well aligned with company culture and values? (1=Poor, 5=Excellent)', 
                                                  null=True, blank=True)
     
+    # Additional 5 Enhanced Co-Founder Questions
+    q_cofounder_workload_distribution = models.IntegerField(verbose_name='Workload Distribution Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                           help_text='How will this role affect founder workload distribution? (1=Increases Burden, 5=Reduces Burden)',
+                                                           null=True, blank=True)
+    q_cofounder_conflict_resolution = models.IntegerField(verbose_name='Conflict Resolution Capability', choices=[(i, str(i)) for i in range(1, 6)],
+                                                        help_text='How well will this role support conflict resolution? (1=Hinders, 5=Enhances)',
+                                                        null=True, blank=True)
+    q_cofounder_innovation_synergy = models.CharField(verbose_name='Innovation Synergy', max_length=12,
+                                                   choices=[
+                                                       ('disruptive', 'Disruptive Innovation'),
+                                                       ('incremental', 'Incremental Innovation'),
+                                                       ('supportive', 'Supportive Innovation'),
+                                                       ('maintenance', 'Maintenance Focus')
+                                                   ], null=True, blank=True)
+    q_cofounder_risk_sharing = models.IntegerField(verbose_name='Risk Sharing Balance', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How well does this role distribute business risk? (1=Concentrates Risk, 5=Distributes Risk)',
+                                                  null=True, blank=True)
+    q_cofounder_growth_acceleration = models.BooleanField(verbose_name='Growth Acceleration Potential', 
+                                                        help_text='Will this role significantly accelerate growth?',
+                                                        null=True, blank=True)
+    
     # Level 2 Questions (CTO/COO/Project Head)
     q6_skill_availability = models.CharField(max_length=10, choices=[
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
@@ -209,7 +263,7 @@ class DiagnosticSubmission(models.Model):
     ], null=True, blank=True)
     q10_mentor_available = models.BooleanField(null=True, blank=True)
     
-    # CEO-Specific Questions (Level 2)
+    # CEO-Specific Questions (Enhanced to 10 questions)
     q_ceo_leadership_impact = models.IntegerField(verbose_name='Leadership Impact', choices=[(i, str(i)) for i in range(1, 6)], 
                                                 help_text='How will this role drive organizational success? (1=Low, 5=High)', 
                                                 null=True, blank=True)
@@ -232,7 +286,28 @@ class DiagnosticSubmission(models.Model):
                                            help_text='Are success metrics clearly defined?', 
                                            null=True, blank=True)
     
-    # CFO-Specific Questions (Level 2)
+    # Additional 5 Enhanced CEO Questions
+    q_ceo_stakeholder_impact = models.IntegerField(verbose_name='Stakeholder Impact Assessment', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How will this role impact key stakeholders? (1=Negative, 5=Highly Positive)',
+                                                 null=True, blank=True)
+    q_ceo_market_positioning = models.CharField(verbose_name='Market Positioning Strategy', max_length=20,
+                                              choices=[
+                                                  ('market_leader', 'Market Leader'),
+                                                  ('market_challenger', 'Market Challenger'),
+                                                  ('niche_player', 'Niche Player'),
+                                                  ('cost_leader', 'Cost Leader')
+                                              ], null=True, blank=True)
+    q_ceo_talent_attraction = models.IntegerField(verbose_name='Talent Attraction Power', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How will this role enhance talent attraction? (1=No Impact, 5=Significant Enhancement)',
+                                                null=True, blank=True)
+    q_ceo_change_management = models.IntegerField(verbose_name='Change Management Complexity', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How complex is the change management required? (1=Simple, 5=Very Complex)',
+                                                null=True, blank=True)
+    q_ceo_customer_experience = models.BooleanField(verbose_name='Customer Experience Enhancement', 
+                                                  help_text='Will this role significantly improve customer experience?',
+                                                  null=True, blank=True)
+    
+    # CFO-Specific Questions (Enhanced to 10 questions)
     q_cfo_roi_confidence = models.IntegerField(verbose_name='ROI Confidence', choices=[(i, str(i)) for i in range(1, 6)], 
                                            help_text='How confident are you in financial returns? (1=Low, 5=Very High)', 
                                            null=True, blank=True)
@@ -255,7 +330,28 @@ class DiagnosticSubmission(models.Model):
                                        help_text='Are compliance requirements satisfied?', 
                                        null=True, blank=True)
     
-    # CTO-Specific Questions (Level 2)
+    # Additional 5 Enhanced CFO Questions
+    q_cfo_investment_justification = models.IntegerField(verbose_name='Investment Justification Strength', choices=[(i, str(i)) for i in range(1, 6)],
+                                                       help_text='How strong is the financial justification? (1=Weak, 5=Very Strong)',
+                                                       null=True, blank=True)
+    q_cfo_cost_reduction = models.CharField(verbose_name='Cost Reduction Potential', max_length=12,
+                                          choices=[
+                                              ('significant', 'Significant Reduction'),
+                                              ('moderate', 'Moderate Reduction'),
+                                              ('minimal', 'Minimal Reduction'),
+                                              ('increase', 'Cost Increase')
+                                          ], null=True, blank=True)
+    q_cfo_revenue_impact = models.IntegerField(verbose_name='Revenue Impact Projection', choices=[(i, str(i)) for i in range(1, 6)],
+                                             help_text='How strong is the projected revenue impact? (1=Minimal, 5=Transformative)',
+                                             null=True, blank=True)
+    q_cfo_financial_controls = models.IntegerField(verbose_name='Financial Controls Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How will this affect financial controls? (1=Weakens Controls, 5=Strengthens Controls)',
+                                                 null=True, blank=True)
+    q_cfo_audit_readiness = models.BooleanField(verbose_name='Audit Readiness Support', 
+                                              help_text='Does this role support audit readiness?',
+                                              null=True, blank=True)
+    
+    # CTO-Specific Questions (Enhanced to 10 questions)
     q_cto_technical_feasibility = models.IntegerField(verbose_name='Technical Feasibility', choices=[(i, str(i)) for i in range(1, 6)],
                                                   help_text='How technically achievable are objectives? (1=Low, 5=High)', 
                                                   null=True, blank=True)
@@ -278,7 +374,28 @@ class DiagnosticSubmission(models.Model):
                                         help_text='Are scalability requirements satisfied?', 
                                         null=True, blank=True)
     
-    # COO-Specific Questions (Level 2)
+    # Additional 5 Enhanced CTO Questions
+    q_cto_architecture_impact = models.IntegerField(verbose_name='Architecture Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How will this role impact system architecture? (1=Minimal, 5=Transformative)',
+                                                  null=True, blank=True)
+    q_cto_security_posture = models.CharField(verbose_name='Security Posture Enhancement', max_length=12,
+                                          choices=[
+                                              ('significant', 'Significant Enhancement'),
+                                              ('moderate', 'Moderate Enhancement'),
+                                              ('minimal', 'Minimal Enhancement'),
+                                              ('risk', 'Security Risk')
+                                          ], null=True, blank=True)
+    q_cto_team_capability = models.IntegerField(verbose_name='Team Capability Enhancement', choices=[(i, str(i)) for i in range(1, 6)],
+                                             help_text='How much will this enhance team capabilities? (1=Minimal, 5=Significant)',
+                                             null=True, blank=True)
+    q_cto_delivery_velocity = models.IntegerField(verbose_name='Delivery Velocity Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How will this affect delivery velocity? (1=Slows Down, 5=Speeds Up)',
+                                                null=True, blank=True)
+    q_cto_quality_assurance = models.BooleanField(verbose_name='Quality Assurance Enhancement', 
+                                               help_text='Will this role significantly improve QA processes?',
+                                               null=True, blank=True)
+    
+    # COO-Specific Questions (Enhanced to 10 questions)
     q_coo_operational_efficiency = models.IntegerField(verbose_name='Operational Efficiency', choices=[(i, str(i)) for i in range(1, 6)],
                                                   help_text='How will this role improve operational efficiency? (1=Low, 5=High)', 
                                                   null=True, blank=True)
@@ -301,7 +418,28 @@ class DiagnosticSubmission(models.Model):
                                            help_text='Are there standardization opportunities?', 
                                            null=True, blank=True)
     
-    # Project Head-Specific Questions (Level 2)
+    # Additional 5 Enhanced COO Questions
+    q_coo_service_delivery = models.IntegerField(verbose_name='Service Delivery Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How will this role impact service delivery? (1=Degrades, 5=Significantly Improves)',
+                                                null=True, blank=True)
+    q_coo_cost_optimization = models.CharField(verbose_name='Cost Optimization Opportunity', max_length=15,
+                                            choices=[
+                                                ('significant', 'Significant Savings'),
+                                                ('moderate', 'Moderate Savings'),
+                                                ('minimal', 'Minimal Savings'),
+                                                ('investment', 'Requires Investment')
+                                            ], null=True, blank=True)
+    q_coo_customer_satisfaction = models.IntegerField(verbose_name='Customer Satisfaction Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                   help_text='How will this affect customer satisfaction? (1=Negative, 5=Highly Positive)',
+                                                   null=True, blank=True)
+    q_coo_operational_risk = models.IntegerField(verbose_name='Operational Risk Assessment', choices=[(i, str(i)) for i in range(1, 6)],
+                                               help_text='What is the operational risk level? (1=High Risk, 5=Low Risk)',
+                                               null=True, blank=True)
+    q_coo_continuous_improvement = models.BooleanField(verbose_name='Continuous Improvement Driver', 
+                                                     help_text='Will this role drive continuous improvement?',
+                                                     null=True, blank=True)
+    
+    # Project Head-Specific Questions (Enhanced to 10 questions)
     q_ph_deliverability = models.IntegerField(verbose_name='Project Deliverability', choices=[(i, str(i)) for i in range(1, 6)],
                                          help_text='How confident are you in delivery? (1=Low, 5=High)', 
                                          null=True, blank=True)
@@ -324,6 +462,27 @@ class DiagnosticSubmission(models.Model):
                                            help_text='Are resource requirements clearly defined?', 
                                            null=True, blank=True)
     
+    # Additional 5 Enhanced Project Head Questions
+    q_ph_stakeholder_management = models.IntegerField(verbose_name='Stakeholder Management Complexity', choices=[(i, str(i)) for i in range(1, 6)],
+                                                   help_text='How complex is stakeholder management? (1=Simple, 5=Very Complex)',
+                                                   null=True, blank=True)
+    q_ph_scope_clarity = models.CharField(verbose_name='Scope Definition Clarity', max_length=15,
+                                        choices=[
+                                            ('crystal_clear', 'Crystal Clear'),
+                                            ('well_defined', 'Well Defined'),
+                                            ('somewhat_clear', 'Somewhat Clear'),
+                                            ('unclear', 'Unclear')
+                                        ], null=True, blank=True)
+    q_ph_success_probability = models.IntegerField(verbose_name='Project Success Probability', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='What is the probability of project success? (1=Low, 5=Very High)',
+                                                null=True, blank=True)
+    q_ph_innovation_potential = models.IntegerField(verbose_name='Innovation Potential', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How innovative is this project? (1=Incremental, 5=Breakthrough)',
+                                                 null=True, blank=True)
+    q_ph_business_value = models.BooleanField(verbose_name='Clear Business Value', 
+                                           help_text='Is the business value clearly defined and measurable?',
+                                           null=True, blank=True)
+    
     # Level 3 Questions (HR Roles)
     q11_talent_availability = models.CharField(max_length=10, choices=[
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
@@ -335,7 +494,7 @@ class DiagnosticSubmission(models.Model):
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')
     ], null=True, blank=True)
     
-    # HR Manager-Specific Questions (Level 3)
+    # HR Manager-Specific Questions (Enhanced to 10 questions)
     q_hr_culture_impact = models.IntegerField(verbose_name='Team Culture Impact', choices=[(i, str(i)) for i in range(1, 6)],
                                         help_text='How will this role affect team culture and morale? (1=Negative, 5=Positive)', 
                                         null=True, blank=True)
@@ -358,7 +517,28 @@ class DiagnosticSubmission(models.Model):
                                                  ('complex', 'Complex')
                                              ], null=True, blank=True)
     
-    # Recruiter-Specific Questions (Level 3)
+    # Additional 5 Enhanced HR Manager Questions
+    q_hr_workforce_planning = models.IntegerField(verbose_name='Workforce Planning Alignment', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How well does this align with workforce planning? (1=Misaligned, 5=Perfectly Aligned)',
+                                                null=True, blank=True)
+    q_hr_succession_planning = models.CharField(verbose_name='Succession Planning Impact', max_length=15,
+                                            choices=[
+                                                ('critical', 'Critical for Succession'),
+                                                ('important', 'Important for Succession'),
+                                                ('supportive', 'Supportive to Succession'),
+                                                ('no_impact', 'No Succession Impact')
+                                            ], null=True, blank=True)
+    q_hr_diversity_inclusion = models.IntegerField(verbose_name='Diversity & Inclusion Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                               help_text='How will this impact D&I initiatives? (1=Negative, 5=Highly Positive)',
+                                               null=True, blank=True)
+    q_hr_employee_engagement = models.IntegerField(verbose_name='Employee Engagement Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How will this affect employee engagement? (1=Negative, 5=Highly Positive)',
+                                                null=True, blank=True)
+    q_hr_legal_compliance = models.BooleanField(verbose_name='Legal Compliance Support', 
+                                             help_text='Does this role support legal compliance requirements?',
+                                             null=True, blank=True)
+    
+    # Recruiter-Specific Questions (Enhanced to 10 questions)
     q_rec_talent_availability = models.IntegerField(verbose_name='Market Talent Availability', choices=[(i, str(i)) for i in range(1, 6)],
                                            help_text='How available is qualified talent in the market? (1=Scarce, 5=Abundant)', 
                                            null=True, blank=True)
@@ -381,7 +561,28 @@ class DiagnosticSubmission(models.Model):
                                          help_text='Is there a ready candidate pipeline?', 
                                          null=True, blank=True)
     
-    # HR Executive-Specific Questions (Level 3)
+    # Additional 5 Enhanced Recruiter Questions
+    q_rec_employer_brand = models.IntegerField(verbose_name='Employer Brand Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                            help_text='How will this role impact employer brand? (1=Negative, 5=Highly Positive)',
+                                            null=True, blank=True)
+    q_rec_interview_process = models.CharField(verbose_name='Interview Process Complexity', max_length=12,
+                                          choices=[
+                                              ('simple', 'Simple Process'),
+                                              ('moderate', 'Moderate Process'),
+                                              ('complex', 'Complex Process'),
+                                              ('specialized', 'Highly Specialized')
+                                          ], null=True, blank=True)
+    q_rec_candidate_experience = models.IntegerField(verbose_name='Candidate Experience Enhancement', choices=[(i, str(i)) for i in range(1, 6)],
+                                                 help_text='How will this improve candidate experience? (1=No Impact, 5=Significant Enhancement)',
+                                                 null=True, blank=True)
+    q_rec_hiring_manager_readiness = models.IntegerField(verbose_name='Hiring Manager Readiness', choices=[(i, str(i)) for i in range(1, 6)],
+                                                     help_text='How ready are hiring managers? (1=Unprepared, 5=Fully Prepared)',
+                                                     null=True, blank=True)
+    q_rec_market_intelligence = models.BooleanField(verbose_name='Market Intelligence Available', 
+                                                 help_text='Is sufficient market intelligence available?',
+                                                 null=True, blank=True)
+    
+    # HR Executive-Specific Questions (Enhanced to 10 questions)
     q_hre_onboarding_readiness = models.IntegerField(verbose_name='Onboarding Process Readiness', choices=[(i, str(i)) for i in range(1, 6)],
                                               help_text='How prepared are our onboarding processes? (1=Not Ready, 5=Fully Ready)', 
                                               null=True, blank=True)
@@ -403,6 +604,27 @@ class DiagnosticSubmission(models.Model):
     q_hre_reporting_framework = models.BooleanField(verbose_name='Reporting Framework Available', 
                                              help_text='Is there a reporting framework in place?', 
                                              null=True, blank=True)
+    
+    # Additional 5 Enhanced HR Executive Questions
+    q_hre_policy_impact = models.IntegerField(verbose_name='Policy Development Impact', choices=[(i, str(i)) for i in range(1, 6)],
+                                           help_text='How will this role impact policy development? (1=Minimal, 5=Significant)',
+                                           null=True, blank=True)
+    q_hre_data_analytics = models.CharField(verbose_name='HR Analytics Capability', max_length=12,
+                                        choices=[
+                                            ('advanced', 'Advanced Analytics'),
+                                            ('intermediate', 'Intermediate Analytics'),
+                                            ('basic', 'Basic Analytics'),
+                                            ('none', 'No Analytics')
+                                        ], null=True, blank=True)
+    q_hre_automation_potential = models.IntegerField(verbose_name='Process Automation Potential', choices=[(i, str(i)) for i in range(1, 6)],
+                                                  help_text='How much automation potential exists? (1=Minimal, 5=Significant)',
+                                                  null=True, blank=True)
+    q_hre_vendor_management = models.IntegerField(verbose_name='Vendor Management Complexity', choices=[(i, str(i)) for i in range(1, 6)],
+                                                help_text='How complex is vendor management? (1=Simple, 5=Very Complex)',
+                                                null=True, blank=True)
+    q_hre_knowledge_transfer = models.BooleanField(verbose_name='Knowledge Transfer Framework', 
+                                                help_text='Is there a knowledge transfer framework in place?',
+                                                null=True, blank=True)
     
     # Decision and Risk
     decision = models.CharField(max_length=10, choices=DECISION_CHOICES)
