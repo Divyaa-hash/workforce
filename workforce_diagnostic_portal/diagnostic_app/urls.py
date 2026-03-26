@@ -5,6 +5,12 @@ urlpatterns = [
     # Homepage (default route)
     path('', views.home_view, name='home'),
     
+    # Static pages
+    path('about/', views.about_view, name='about'),
+    path('user-roles/', views.user_roles_view, name='user_roles'),
+    path('features/', views.features_view, name='features'),
+    path('benefits/', views.benefits_view, name='benefits'),
+    
     # Authentication
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),

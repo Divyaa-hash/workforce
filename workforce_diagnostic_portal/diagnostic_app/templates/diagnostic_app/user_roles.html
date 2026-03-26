@@ -1,0 +1,764 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}User Roles - Workforce Diagnostic Portal{% endblock %}
+
+{% block login_content %}
+<!-- Sticky Navigation Bar -->
+<nav class="homepage-nav">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <div class="logo-icon">W</div>
+            <span>Workforce Diagnostic</span>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{% url 'home' %}" class="nav-link">Home</a>
+            <a href="{% url 'about' %}" class="nav-link">About</a>
+            <a href="{% url 'user_roles' %}" class="nav-link active">User Roles</a>
+            <a href="{% url 'features' %}" class="nav-link">Features</a>
+            <a href="{% url 'benefits' %}" class="nav-link">Benefits</a>
+            <a href="{% url 'login' %}" class="nav-link nav-cta">Get Started</a>
+        </div>
+        
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- User Roles Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>User Roles & Responsibilities</h2>
+            <p>Each role has specific responsibilities designed to ensure comprehensive and fair hiring decisions</p>
+        </div>
+        
+        <div class="role-levels">
+            <!-- Level 1: Strategic Leadership -->
+            <div class="role-level">
+                <div class="level-header">
+                    <h3>Level 1: Strategic Leadership</h3>
+                    <p class="level-description">Ownership and strategic direction</p>
+                </div>
+                <div class="role-cards">
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">👑</div>
+                            <h4>Founder</h4>
+                            <span class="role-badge strategic">Strategic</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Create and define job roles</li>
+                                <li>Set strategic hiring priorities</li>
+                                <li>Approve final hiring decisions</li>
+                                <li>Oversee entire recruitment process</li>
+                                <li>Access system analytics and reports</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">🤝</div>
+                            <h4>Co-Founder</h4>
+                            <span class="role-badge strategic">Strategic</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Create and define job roles</li>
+                                <li>Collaborate on strategic hiring</li>
+                                <li>Approve final hiring decisions</li>
+                                <li>Support founder in oversight</li>
+                                <li>Access system analytics and reports</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 2: Executive Leadership -->
+            <div class="role-level">
+                <div class="level-header">
+                    <h3>Level 2: Executive Leadership</h3>
+                    <p class="level-description">Execution and delivery management</p>
+                </div>
+                <div class="role-cards">
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">💼</div>
+                            <h4>CEO</h4>
+                            <span class="role-badge executive">Executive</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Review and assess candidates</li>
+                                <li>Provide executive perspective</li>
+                                <li>Participate in final decisions</li>
+                                <li>Ensure alignment with business goals</li>
+                                <li>Access analytics and insights</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">💰</div>
+                            <h4>CFO</h4>
+                            <span class="role-badge executive">Executive</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Evaluate budget and salary proposals</li>
+                                <li>Assess financial impact of hiring</li>
+                                <li>Review compensation packages</li>
+                                <li>Ensure financial sustainability</li>
+                                <li>Access financial analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">🔧</div>
+                            <h4>CTO</h4>
+                            <span class="role-badge executive">Executive</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Assess technical requirements</li>
+                                <li>Evaluate technical candidates</li>
+                                <li>Define technical skill standards</li>
+                                <li>Ensure technical team fit</li>
+                                <li>Access technical analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">⚙️</div>
+                            <h4>COO</h4>
+                            <span class="role-badge executive">Executive</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Evaluate operational impact</li>
+                                <li>Assess workflow integration</li>
+                                <li>Review process efficiency</li>
+                                <li>Ensure operational readiness</li>
+                                <li>Access operational analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">🚀</div>
+                            <h4>Project Head</h4>
+                            <span class="role-badge executive">Executive</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Evaluate project-specific needs</li>
+                                <li>Assess candidate project fit</li>
+                                <li>Review project impact</li>
+                                <li>Ensure project team compatibility</li>
+                                <li>Access project analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Level 3: HR & Operations Support -->
+            <div class="role-level">
+                <div class="level-header">
+                    <h3>Level 3: HR & Operations Support</h3>
+                    <p class="level-description">HR and operational support functions</p>
+                </div>
+                <div class="role-cards">
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">👥</div>
+                            <h4>HR Manager</h4>
+                            <span class="role-badge support">Support</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Manage recruitment process</li>
+                                <li>Coordinate candidate assessments</li>
+                                <li>Facilitate communication</li>
+                                <li>Ensure compliance with policies</li>
+                                <li>Manage candidate relationships</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">🎯</div>
+                            <h4>Recruiter</h4>
+                            <span class="role-badge support">Support</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Source and screen candidates</li>
+                                <li>Conduct initial interviews</li>
+                                <li>Manage candidate pipeline</li>
+                                <li>Coordinate assessment logistics</li>
+                                <li>Provide recruitment insights</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="role-card">
+                        <div class="role-header">
+                            <div class="role-icon">📋</div>
+                            <h4>HR Executive</h4>
+                            <span class="role-badge support">Support</span>
+                        </div>
+                        <div class="role-responsibilities">
+                            <h5>Key Responsibilities:</h5>
+                            <ul>
+                                <li>Support recruitment activities</li>
+                                <li>Assist in candidate evaluation</li>
+                                <li>Manage documentation</li>
+                                <li>Coordinate interview schedules</li>
+                                <li>Provide administrative support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Find Your Role in the Hiring Process</h2>
+            <p>Join our platform and contribute to building exceptional teams</p>
+            <a href="{% url 'login' %}" class="btn btn-primary btn-large">Get Started Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="homepage-footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="logo-icon">W</div>
+                    <span>Workforce Diagnostic</span>
+                </div>
+                <p class="footer-description">
+                    Revolutionizing hiring through intelligent role-based assessments and collaborative decision-making.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'user_roles' %}">User Roles</a></li>
+                    <li><a href="{% url 'features' %}">Features</a></li>
+                    <li><a href="{% url 'login' %}">Get Started</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>System Features</h4>
+                <ul class="footer-links">
+                    <li>Role-Based Assessments</li>
+                    <li>Collaborative Decisions</li>
+                    <li>Smart Analytics</li>
+                    <li>Real-time Notifications</li>
+                    <li>Audit Trail</li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <div class="footer-contact">
+                    <p> 6374952477</p>
+                    <p>🏢 Sentersoft Technologies, Virudhunagar</p>
+                    <p>🌐 https://www.sentersoftech.com/</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2026 Workforce Diagnostic Portal. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Homepage Navigation Bar */
+.homepage-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a202c;
+    text-decoration: none;
+}
+
+.nav-logo .logo-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-link {
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #3b82f6;
+}
+
+.nav-link.active {
+    color: #3b82f6;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3b82f6;
+}
+
+.nav-cta {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background: #4a5568;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Section Styles */
+.section {
+    padding: 120px 0 80px 0; /* Extra top padding for fixed nav */
+}
+
+.section-alt {
+    background: #f8fafc;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    font-size: 1.125rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Roles Section */
+.role-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.level-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.level-header h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 10px;
+}
+
+.level-description {
+    color: #64748b;
+    font-size: 1.125rem;
+}
+
+.role-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.role-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.role-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.role-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.role-header h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-badge.strategic {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.role-badge.executive {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.role-badge.support {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.role-responsibilities h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.role-responsibilities ul {
+    list-style: none;
+    padding: 0;
+}
+
+.role-responsibilities li {
+    padding: 6px 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    position: relative;
+    padding-left: 20px;
+}
+
+.role-responsibilities li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.cta-content p {
+    font-size: 1.125rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    background: white;
+    color: #1e40af;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+.homepage-footer {
+    background: #1a202c;
+    color: white;
+    padding: 60px 0 20px 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.footer-logo .logo-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.footer-description {
+    color: #a0aec0;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.footer-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-contact p {
+    color: #a0aec0;
+    margin-bottom: 8px;
+}
+
+.footer-bottom {
+    border-top: 1px solid #2d3748;
+    padding-top: 20px;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-bottom-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-bottom-links a {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .role-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .section {
+        padding: 100px 0 60px 0;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .level-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}

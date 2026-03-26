@@ -1,6 +1,6 @@
 {% extends 'diagnostic_app/base.html' %}
 
-{% block title %}Workforce Diagnostic Portal - Home{% endblock %}
+{% block title %}About Us - Workforce Diagnostic Portal{% endblock %}
 
 {% block login_content %}
 <!-- Sticky Navigation Bar -->
@@ -12,8 +12,8 @@
         </div>
         
         <div class="nav-menu">
-            <a href="{% url 'home' %}" class="nav-link active">Home</a>
-            <a href="{% url 'about' %}" class="nav-link">About</a>
+            <a href="{% url 'home' %}" class="nav-link">Home</a>
+            <a href="{% url 'about' %}" class="nav-link active">About</a>
             <a href="{% url 'user_roles' %}" class="nav-link">User Roles</a>
             <a href="{% url 'features' %}" class="nav-link">Features</a>
             <a href="{% url 'benefits' %}" class="nav-link">Benefits</a>
@@ -28,14 +28,53 @@
     </div>
 </nav>
 
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="hero-content">
-        <h1 class="hero-title">Workforce Diagnostic Portal</h1>
-        <p class="hero-subtitle">Streamline your hiring process with intelligent role-based assessments and collaborative decision-making</p>
-        <div class="hero-buttons">
-            <a href="{% url 'login' %}" class="btn btn-primary btn-large">Get Started</a>
-            <a href="{% url 'about' %}" class="btn btn-secondary btn-large">Learn More</a>
+<!-- About Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>About Workforce Diagnostic Portal</h2>
+            <p>Revolutionizing how organizations evaluate and hire talent through structured, role-based assessments</p>
+        </div>
+        
+        <div class="about-content">
+            <div class="about-text">
+                <p>The Workforce Diagnostic Portal transforms traditional hiring processes by implementing intelligent, role-based assessment systems that enable collaborative decision-making across all levels of your organization.</p>
+                <p>Our platform brings together founders, executives, and HR professionals to create a unified approach to talent acquisition that ensures every hire aligns with your company's strategic goals and cultural values.</p>
+            </div>
+            
+            <div class="key-features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Role-Based Assessments</h4>
+                    <p>Tailored evaluation criteria for each organizational role</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🤝</div>
+                    <h4>Collaborative Decisions</h4>
+                    <p>Multi-level approval process ensuring consensus</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <h4>Data-Driven Insights</h4>
+                    <p>Analytics and reporting for informed hiring decisions</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Streamlined Workflow</h4>
+                    <p>Efficient process from job creation to final selection</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Transform Your Hiring Process?</h2>
+            <p>Join organizations that are already using our platform to make better hiring decisions</p>
+            <a href="{% url 'login' %}" class="btn btn-primary btn-large">Get Started Now</a>
         </div>
     </div>
 </section>
@@ -207,70 +246,133 @@
     transition: all 0.3s ease;
 }
 
-/* Homepage Styles */
-.hero-section {
-    background: #ffffff;
-    color: #1a202c;
-    padding: 100px 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
+/* Section Styles */
+.section {
+    padding: 120px 0 80px 0; /* Extra top padding for fixed nav */
 }
 
-.hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 800px;
+.section-alt {
+    background: #f8fafc;
+}
+
+.container {
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-.hero-title {
-    font-size: 3.5rem;
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    font-size: 1.125rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* About Section */
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.about-text {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #475569;
+}
+
+.about-text p {
+    margin-bottom: 20px;
+}
+
+.key-features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f9ff;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.feature-item h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 8px;
+}
+
+.feature-item p {
+    color: #64748b;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 20px;
-    line-height: 1.2;
-    color: #1a202c;
 }
 
-.hero-subtitle {
-    font-size: 1.25rem;
+.cta-content p {
+    font-size: 1.125rem;
     margin-bottom: 40px;
-    opacity: 0.8;
-    line-height: 1.6;
-    color: #64748b;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
+    opacity: 0.9;
 }
 
 .btn-large {
     padding: 15px 30px;
     font-size: 18px;
     border-radius: 10px;
+    background: white;
+    color: #1e40af;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: white;
-}
-
-.btn-secondary {
-    background: transparent;
-    color: #3b82f6;
-    border: 2px solid #3b82f6;
-}
-
-.btn-secondary:hover {
-    background: #3b82f6;
-    color: white;
 }
 
 .btn-large:hover {
@@ -278,7 +380,7 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Footer Styles */
+/* Footer */
 .homepage-footer {
     background: #1a202c;
     color: white;
@@ -394,6 +496,11 @@
         display: flex;
     }
     
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
     .footer-content {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -405,12 +512,16 @@
         text-align: center;
     }
     
-    .hero-title {
-        font-size: 2.5rem;
+    .section {
+        padding: 100px 0 60px 0;
     }
     
-    .hero-subtitle {
-        font-size: 1.125rem;
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 2rem;
     }
 }
 </style>

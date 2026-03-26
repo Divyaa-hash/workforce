@@ -27,6 +27,23 @@ def home_view(request):
     # Show public homepage for non-authenticated users
     return render(request, 'diagnostic_app/home_public.html')
 
+# Static Page Views
+def about_view(request):
+    """About page view"""
+    return render(request, 'diagnostic_app/about.html')
+
+def user_roles_view(request):
+    """User roles page view"""
+    return render(request, 'diagnostic_app/user_roles.html')
+
+def features_view(request):
+    """Features page view"""
+    return render(request, 'diagnostic_app/features.html')
+
+def benefits_view(request):
+    """Benefits page view"""
+    return render(request, 'diagnostic_app/benefits.html')
+
 # Authentication Views
 def login_view(request):
     if request.user.is_authenticated:

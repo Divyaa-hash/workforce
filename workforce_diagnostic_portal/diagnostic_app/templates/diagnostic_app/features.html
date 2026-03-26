@@ -1,0 +1,788 @@
+{% extends 'diagnostic_app/base.html' %}
+
+{% block title %}Features - Workforce Diagnostic Portal{% endblock %}
+
+{% block login_content %}
+<!-- Sticky Navigation Bar -->
+<nav class="homepage-nav">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <div class="logo-icon">W</div>
+            <span>Workforce Diagnostic</span>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{% url 'home' %}" class="nav-link">Home</a>
+            <a href="{% url 'about' %}" class="nav-link">About</a>
+            <a href="{% url 'user_roles' %}" class="nav-link">User Roles</a>
+            <a href="{% url 'features' %}" class="nav-link active">Features</a>
+            <a href="{% url 'benefits' %}" class="nav-link">Benefits</a>
+            <a href="{% url 'login' %}" class="nav-link nav-cta">Get Started</a>
+        </div>
+        
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Features Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Platform Features</h2>
+            <p>Comprehensive tools designed to streamline your hiring process</p>
+        </div>
+        
+        <div class="feature-showcase">
+            <div class="feature-showcase-item">
+                <div class="feature-content">
+                    <h3>Smart Job Role Creation</h3>
+                    <p>Create detailed job roles with automatic LPA-based level classification. Our intelligent system helps you define clear role requirements and appropriate compensation ranges.</p>
+                    <ul>
+                        <li>Automatic salary range classification</li>
+                        <li>Role-specific assessment criteria</li>
+                        <li>Budget optimization recommendations</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="demo-card">
+                        <div class="demo-header">Create Job Role</div>
+                        <div class="demo-field">
+                            <label>Job Title</label>
+                            <div class="demo-input">Senior Developer</div>
+                        </div>
+                        <div class="demo-field">
+                            <label>Experience Level</label>
+                            <div class="demo-input">Senior Level</div>
+                        </div>
+                        <div class="demo-field">
+                            <label>Salary Range (LPA)</label>
+                            <div class="demo-input">15-25 LPA</div>
+                        </div>
+                        <div class="demo-field">
+                            <label>Auto-Classified Level</label>
+                            <div class="demo-input highlighted">Level 2 (Executive)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-showcase-item reverse">
+                <div class="feature-content">
+                    <h3>Multi-Role Assessment System</h3>
+                    <p>Each candidate is evaluated by multiple team members based on their role and expertise. Get comprehensive feedback from all relevant stakeholders.</p>
+                    <ul>
+                        <li>Role-specific evaluation criteria</li>
+                        <li>Collaborative assessment workflow</li>
+                        <li>Real-time progress tracking</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="assessment-demo">
+                        <div class="assessment-header">Candidate Assessment</div>
+                        <div class="assessors">
+                            <div class="assessor">
+                                <div class="assessor-avatar">👑</div>
+                                <div class="assessor-info">
+                                    <div class="assessor-name">Founder</div>
+                                    <div class="assessor-status completed">Completed</div>
+                                </div>
+                            </div>
+                            <div class="assessor">
+                                <div class="assessor-avatar">💼</div>
+                                <div class="assessor-info">
+                                    <div class="assessor-name">CEO</div>
+                                    <div class="assessor-status completed">Completed</div>
+                                </div>
+                            </div>
+                            <div class="assessor">
+                                <div class="assessor-avatar">👥</div>
+                                <div class="assessor-info">
+                                    <div class="assessor-name">HR Manager</div>
+                                    <div class="assessor-status in-progress">In Progress</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 66%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-showcase-item">
+                <div class="feature-content">
+                    <h3>Analytics & Insights</h3>
+                    <p>Get comprehensive insights into your hiring process with detailed analytics, reports, and trends to make data-driven decisions.</p>
+                    <ul>
+                        <li>Hiring funnel analytics</li>
+                        <li>Time-to-hire metrics</li>
+                        <li>Cost-per-hire analysis</li>
+                    </ul>
+                </div>
+                <div class="feature-visual">
+                    <div class="analytics-demo">
+                        <div class="analytics-header">Hiring Analytics</div>
+                        <div class="metric-cards">
+                            <div class="metric-card">
+                                <div class="metric-value">24</div>
+                                <div class="metric-label">Days to Hire</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">85%</div>
+                                <div class="metric-label">Completion Rate</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">$4.2k</div>
+                                <div class="metric-label">Cost per Hire</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Experience These Powerful Features</h2>
+            <p>Transform your hiring process with our comprehensive platform</p>
+            <a href="{% url 'login' %}" class="btn btn-primary btn-large">Get Started Now</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="homepage-footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="logo-icon">W</div>
+                    <span>Workforce Diagnostic</span>
+                </div>
+                <p class="footer-description">
+                    Revolutionizing hiring through intelligent role-based assessments and collaborative decision-making.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'user_roles' %}">User Roles</a></li>
+                    <li><a href="{% url 'features' %}">Features</a></li>
+                    <li><a href="{% url 'login' %}">Get Started</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>System Features</h4>
+                <ul class="footer-links">
+                    <li>Role-Based Assessments</li>
+                    <li>Collaborative Decisions</li>
+                    <li>Smart Analytics</li>
+                    <li>Real-time Notifications</li>
+                    <li>Audit Trail</li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <div class="footer-contact">
+                    <p> 6374952477</p>
+                    <p>🏢 Sentersoft Technologies, Virudhunagar</p>
+                    <p>🌐 https://www.sentersoftech.com/</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2026 Workforce Diagnostic Portal. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Homepage Navigation Bar */
+.homepage-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a202c;
+    text-decoration: none;
+}
+
+.nav-logo .logo-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-link {
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #3b82f6;
+}
+
+.nav-link.active {
+    color: #3b82f6;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #3b82f6;
+}
+
+.nav-cta {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background: #4a5568;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Section Styles */
+.section {
+    padding: 120px 0 80px 0; /* Extra top padding for fixed nav */
+}
+
+.section-alt {
+    background: #f8fafc;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    font-size: 1.125rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Feature Showcase */
+.feature-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+}
+
+.feature-showcase-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.feature-showcase-item.reverse {
+    direction: rtl;
+}
+
+.feature-showcase-item.reverse > * {
+    direction: ltr;
+}
+
+.feature-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+.feature-content p {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #475569;
+    margin-bottom: 24px;
+}
+
+.feature-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-content li {
+    padding: 8px 0;
+    color: #64748b;
+    position: relative;
+    padding-left: 24px;
+}
+
+.feature-content li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* Feature Visuals */
+.feature-visual {
+    display: flex;
+    justify-content: center;
+}
+
+.demo-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 320px;
+}
+
+.demo-header {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.demo-field {
+    margin-bottom: 16px;
+}
+
+.demo-field label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.demo-input {
+    background: #f8fafc;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.875rem;
+    color: #1a202c;
+}
+
+.demo-input.highlighted {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-color: #3b82f6;
+    font-weight: 600;
+}
+
+/* Assessment Demo */
+.assessment-demo {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 320px;
+}
+
+.assessment-header {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.assessors {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.assessor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.assessor-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+}
+
+.assessor-info {
+    flex: 1;
+}
+
+.assessor-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.875rem;
+}
+
+.assessor-status {
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+.assessor-status.completed {
+    color: #10b981;
+}
+
+.assessor-status.in-progress {
+    color: #f59e0b;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+}
+
+/* Analytics Demo */
+.analytics-demo {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 320px;
+}
+
+.analytics-header {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.metric-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.metric-card {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 4px;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.cta-content p {
+    font-size: 1.125rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    background: white;
+    color: #1e40af;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+.homepage-footer {
+    background: #1a202c;
+    color: white;
+    padding: 60px 0 20px 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.footer-logo .logo-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.footer-description {
+    color: #a0aec0;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.footer-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-contact p {
+    color: #a0aec0;
+    margin-bottom: 8px;
+}
+
+.footer-bottom {
+    border-top: 1px solid #2d3748;
+    padding-top: 20px;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-bottom-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-bottom-links a {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .feature-showcase-item {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .feature-showcase-item.reverse {
+        direction: ltr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .section {
+        padding: 100px 0 60px 0;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .feature-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}
