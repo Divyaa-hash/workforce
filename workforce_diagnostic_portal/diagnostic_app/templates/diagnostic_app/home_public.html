@@ -33,9 +33,34 @@
     <div class="hero-content">
         <h1 class="hero-title">Workforce Diagnostic Portal</h1>
         <p class="hero-subtitle">Streamline your hiring process with intelligent role-based assessments and collaborative decision-making</p>
+        
+        <div class="project-description">
+            <p>This project is designed to provide an efficient and intelligent system that helps users make better decisions through structured inputs, analysis, and role-based evaluations. The system collects user inputs, processes them using predefined algorithms, and generates meaningful insights, risk levels, and recommendations. It ensures transparency, accuracy, and effective decision-making for various scenarios such as hiring, investments, and planning.</p>
+        </div>
+        
         <div class="hero-buttons">
             <a href="{% url 'login' %}" class="btn btn-primary btn-large">Get Started</a>
             <a href="{% url 'about' %}" class="btn btn-secondary btn-large">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Credits Section -->
+<section class="credits-section">
+    <div class="container">
+        <div class="credits-content">
+            <div class="developer-info">
+                <h3>Developed by</h3>
+                <p class="developer-name">Divyaa A</p>
+                <p class="developer-details">Final Year, IT-A</p>
+            </div>
+            
+            <div class="guide-info">
+                <h3>Guided by</h3>
+                <p class="guide-name">Dr. S. Raju, M.Sc., M.C.A., M.Phil., M.E., Ph.D.</p>
+                <p class="guide-details">Head of the Department</p>
+                <p class="guide-details">Department of Information Technology</p>
+            </div>
         </div>
     </div>
 </section>
@@ -235,10 +260,27 @@
 
 .hero-subtitle {
     font-size: 1.25rem;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     opacity: 0.8;
     line-height: 1.6;
     color: #64748b;
+}
+
+.project-description {
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    padding: 25px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #3b82f6;
+}
+
+.project-description p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #475569;
+    margin: 0;
+    text-align: left;
 }
 
 .hero-buttons {
@@ -276,6 +318,56 @@
 .btn-large:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Credits Section */
+.credits-section {
+    background: #f8fafc;
+    padding: 60px 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.credits-content {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    flex-wrap: wrap;
+}
+
+.developer-info, .guide-info {
+    text-align: center;
+    max-width: 300px;
+}
+
+.developer-info h3, .guide-info h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #3b82f6;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.developer-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 5px;
+}
+
+.guide-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.developer-details, .guide-details {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
 }
 
 /* Footer Styles */
@@ -411,6 +503,20 @@
     
     .hero-subtitle {
         font-size: 1.125rem;
+    }
+    
+    .project-description {
+        margin: 0 auto 30px auto;
+        padding: 20px;
+    }
+    
+    .credits-content {
+        flex-direction: column;
+        gap: 40px;
+    }
+    
+    .developer-info, .guide-info {
+        max-width: 100%;
     }
 }
 </style>
